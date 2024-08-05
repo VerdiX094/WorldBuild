@@ -1,0 +1,16 @@
+
+Astronauts
+
+Custom modules for dahzito's stuff
+
+Ore and oil mining
+- Ore can be processed into material for parts
+- Oil can be processed into rocket fuel
+- Ore and oil output dependent on distance to landmark and terrain height
+ > Higher - more ore
+ > Lower - more oil
+ > Closer to landmark = more overall resources output
+
+Ore/oil distribution visuals? idk
+
+Oxygen system because SFS apparently doesn't have one built-in
