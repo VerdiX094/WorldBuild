@@ -16,21 +16,16 @@ namespace WorldBuild.Mod
         {
             if (injected) return;
 
-            Inject();
 
             injected = true;
+
+            Inject();
         }
 
 #pragma warning restore IDE0051
 
         private void Inject()
         {
-            if (!Utility.CheckPackLoaded())
-            {
-                Debug.Log("Pack not loaded, destroying managers holder!");
-                Destroy(gameObject);
-                return; 
-            }
             foreach (Part part in Base.partsLoader.parts.Values)
             {
                 ExternalModule[] modules = part.GetComponentsInChildren<ExternalModule>();

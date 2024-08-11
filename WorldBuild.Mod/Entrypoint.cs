@@ -2,6 +2,7 @@
 using System.Reflection;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using HarmonyLib;
 
 namespace WorldBuild.Mod
 {
@@ -15,6 +16,11 @@ namespace WorldBuild.Mod
         public override string MinimumGameVersionNecessary => "1.5.10.2";
 
         public static GameObject BaseGO;
+
+        public override void Early_Load()
+        {
+            new Harmony("no.i.chuj").PatchAll();
+        }
 
         public override void Load()
         {
