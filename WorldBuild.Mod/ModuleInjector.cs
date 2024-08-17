@@ -6,7 +6,7 @@ using WorldBuild.Toolkit;
 
 namespace WorldBuild.Mod
 {
-    public class ModuleInjector : BaseManager
+    public class ModuleInjector : BaseManager<ModuleInjector>
     {
         public bool injected;
 

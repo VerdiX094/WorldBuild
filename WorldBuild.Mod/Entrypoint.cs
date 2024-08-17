@@ -34,8 +34,10 @@ namespace WorldBuild.Mod
         {
             foreach (Type type in Assembly.GetExecutingAssembly().GetTypes())
             {
-                if (type.IsSubclassOf(typeof(BaseManager)))
+                Debug.Log($"Searching type: {type.Name}");
+                if (type.BaseType.IsGenericType && type.BaseType.GetGenericTypeDefinition() == typeof(BaseManager<>))
                 {
+                    Debug.Log($"!!! Found: {type.Name}");
                     BaseGO.AddComponent(type);
                 }
             }

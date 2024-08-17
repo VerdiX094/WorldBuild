@@ -71,12 +71,16 @@
     <Compile Include="BaseManager.cs" />
     <Compile Include="Module.cs" />
     <Compile Include="ModuleInjector.cs" />
+    <Compile Include="Modules\Astronaut.cs" />
     <Compile Include="Modules\DrillModule.cs" />
     <Compile Include="Patches\DevSettingsPatch.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UI\AstronautManagementGUI.cs" />
+    <Compile Include="UI\AstronautSpawnGUI.cs" />
     <Compile Include="UI\GUIBase.cs" />
     <Compile Include="UI\GUIManager.cs" />
     <Compile Include="Utility.cs" />
+    <Compile Include="Variables\Bindable.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

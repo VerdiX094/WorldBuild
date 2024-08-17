@@ -7,28 +7,19 @@ using UnityEngine;
 
 namespace WorldBuild.Mod
 {
-    public class BaseManager : MonoBehaviour {
-        public static BaseManager firstInstance;
-        private bool passed;
+    public class BaseManager<T> : MonoBehaviour
+        where T : BaseManager<T>
+    {
+        public static T main;
 
-        private void Awake()
+        public void Awake()
         {
-            if (firstInstance == null)
-                firstInstance = this;
-        }
-
-        private void Update()
-        {
-            if (passed) return;
-            if (firstInstance != this) return;
-            
-            passed = true;
-            if (!Utility.CheckPackLoaded())
+            if (this is T)
             {
-                Debug.Log("Pack not loaded, destroying managers holder!");
-                Destroy(Entrypoint.BaseGO);
-                return;
+                main = this as T;
             }
+            else
+                Debug.LogError("NOSZ KURWA");
         }
     }
 }
