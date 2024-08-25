@@ -1,9 +1,6 @@
 ﻿using SFS.UI.ModGUI;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -18,11 +15,18 @@ namespace WorldBuild.Mod.UI
 
         protected Dictionary<string, GUIElement> elements = new Dictionary<string, GUIElement>();
 
+        public Dictionary<string, GUIElement> Elements => elements;
+
         public abstract string SceneToAttach { get; }
         public abstract Func<bool> GOActiveCondition { get; }
 
         public virtual void Begin() { }
         public virtual void GenerateGUI() { }
+
+        protected void VerticalDefGroup()
+        {
+            window.CreateLayoutGroup(SFS.UI.ModGUI.Type.Vertical, spacing: 8, padding: new RectOffset(0, 0, 8, 0));
+        }
 
         public GUIBase()
         {

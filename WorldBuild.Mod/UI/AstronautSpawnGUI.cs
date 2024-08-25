@@ -31,10 +31,14 @@ namespace WorldBuild.Mod.UI
 
         public override void GenerateGUI()
         {
-            window = Builder.CreateWindow(holder.transform, Builder.GetRandomID(), 256, 96, 300, 300, true, true, 0.95f, "Astronaut Manager");
-            window.CreateLayoutGroup(SFS.UI.ModGUI.Type.Vertical);
+            window = Builder.CreateWindow(holder.transform, Builder.GetRandomID(), 384, 256, 300, 300, true, true, 0.95f, "Astronaut Manager");
+            VerticalDefGroup();
 
-            elements.Add("spawnBtn", Builder.CreateButton(window, 224, 32, onClick: () =>
+            elements.Add("oxygenAvail", Builder.CreateLabel(
+                window, 352, 32, text: "Available oxygen: 0m 0s"
+            ));
+
+            elements.Add("spawnBtn", Builder.CreateButton(window, 224, 45, onClick: () =>
             {
                 AstronautSpawner.main.StartEVA();
             }, text: "Start EVA"));

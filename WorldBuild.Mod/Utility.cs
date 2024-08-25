@@ -29,6 +29,7 @@ namespace WorldBuild.Mod
         {
             for (int i = 0; i < SceneManager.loadedSceneCount; i++)
             {
+                if (SceneManager.GetSceneAt(i).isLoaded)
                 if (SceneManager.GetSceneAt(i).name == name)
                 {
                     return true;

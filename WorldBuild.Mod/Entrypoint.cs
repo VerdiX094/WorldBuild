@@ -3,6 +3,10 @@ using System.Reflection;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using HarmonyLib;
+using SFS.Parts.Modules;
+using SFS.Parts;
+
+// KURWAAAA
 
 namespace WorldBuild.Mod
 {
@@ -10,7 +14,7 @@ namespace WorldBuild.Mod
     {
         public override string ModNameID => "worldbuild";
         public override string DisplayName => "WorldBuild";
-        public override string Author => "VerdiX/Fusion Space Industries";
+        public override string Author => "Fusion Space Industries";
         public override string Description => "Enables you to build your rocket during a mission!";
         public override string ModVersion => "(Dev version)";
         public override string MinimumGameVersionNecessary => "1.5.10.2";
