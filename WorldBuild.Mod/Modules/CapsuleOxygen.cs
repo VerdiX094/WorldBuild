@@ -29,9 +29,9 @@ namespace WorldBuild.Mod.Modules
         {
             varMod = GetComponent<VariablesModule>();
 
-            if (SceneManager.GetActiveScene().name == "Build_PC")
+            if (SceneManager.GetActiveScene().name == "Build_PC" && !varMod.boolVariables.GetValue("oxygenInitialized"))
             {
-
+                Oxygen = MaxOxygen;
             }
         }
     }

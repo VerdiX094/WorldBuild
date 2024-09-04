@@ -60,8 +60,6 @@ namespace WorldBuild.Mod.Modules
             }
 
             return result.Round(3);
-
-            return -1;
         }
 
         public double CalculateOxygenAvailable()
@@ -74,7 +72,6 @@ namespace WorldBuild.Mod.Modules
             }
 
             return result;
-            return 0;
         }
 
         /// <summary>
@@ -100,8 +97,6 @@ namespace WorldBuild.Mod.Modules
 
 
             return oxygenLeft.Round(3);
-
-            return 0;
         }
     }
 }

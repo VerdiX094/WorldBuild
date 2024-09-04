@@ -90,6 +90,17 @@ namespace WorldBuild.Mod
                 AstronautState.main.CreateAstronaut("WorldBuild EVA");
             
             var eva = AstronautManager.main.SpawnEVA("WorldBuild EVA", PlayerController.main.player.Value.location.Value, PlayerController.main.player.Value.transform.rotation.z, 0, false, 1, 0);
+            
+            var pos = CapsuleScanner.main.selectedCapsule.Value.GetGlobalPosition();
+
+            if (pos == null)
+            {
+                AstronautManager.DestroyEVA(eva, false);
+
+                return;
+            }
+
+            eva.transform.position = pos;
 
             IEWInjector.ForceRefresh();
 

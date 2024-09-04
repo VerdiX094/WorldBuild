@@ -1,12 +1,6 @@
-﻿using System;
-using System.Reflection;
-using UnityEngine;
-using UnityEngine.SceneManagement;
+﻿using UnityEngine;
 using HarmonyLib;
-using SFS.Parts.Modules;
-using SFS.Parts;
-
-// KURWAAAA
+using WorldBuild.Mod.Managers;
 
 namespace WorldBuild.Mod
 {
@@ -21,30 +15,10 @@ namespace WorldBuild.Mod
 
         public static GameObject BaseGO;
 
-        public override void Early_Load()
+        public Entrypoint()
         {
             new Harmony("no.i.chuj").PatchAll();
-        }
-
-        public override void Load()
-        {
-            BaseGO = new GameObject("WorldBuild Managers");
-            SceneManager.MoveGameObjectToScene(BaseGO, SceneManager.GetSceneByName("Base_PC"));
-
-            InjectManagers();
-        }
-
-        private void InjectManagers()
-        {
-            foreach (Type type in Assembly.GetExecutingAssembly().GetTypes())
-            {
-                Debug.Log($"Searching type: {type.Name}");
-                if (type.BaseType.IsGenericType && type.BaseType.GetGenericTypeDefinition() == typeof(BaseManager<>))
-                {
-                    Debug.Log($"!!! Found: {type.Name}");
-                    BaseGO.AddComponent(type);
-                }
-            }
+            ManagerInjector.Inject();
         }
     }
 }

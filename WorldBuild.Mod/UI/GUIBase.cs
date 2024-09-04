@@ -22,6 +22,7 @@ namespace WorldBuild.Mod.UI
 
         public virtual void Begin() { }
         public virtual void GenerateGUI() { }
+        public virtual void Update() { }
 
         protected void VerticalDefGroup()
         {
@@ -90,6 +91,8 @@ namespace WorldBuild.Mod.UI
             }
 
             holder.SetActive(newActive);
+
+            Update();
         }
     }
 }

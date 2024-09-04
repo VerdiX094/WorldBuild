@@ -38,5 +38,19 @@ namespace WorldBuild.Mod
 
             return false;
         }
+
+        public static Component GetOrAddComponent(this GameObject go, Type type)
+        {
+            if (!go) return null;
+
+            if (go.GetComponent(type) == null) go.AddComponent(type);
+
+            return go.GetComponent(type);
+        }
+
+        public static Component GetOrAddComponent(this Component component, Type type)
+        {
+            return component.gameObject.GetComponent(type);
+        }
     }
 }
