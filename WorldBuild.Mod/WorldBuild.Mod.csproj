@@ -62,21 +62,36 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Spaceflight Simulator\Spaceflight Simulator Game\Spaceflight Simulator_Data\Managed\UnityEngine.InputLegacyModule.dll</HintPath>
     </Reference>
+    <Reference Include="UnityEngine.Physics2DModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Spaceflight Simulator\Spaceflight Simulator Game\Spaceflight Simulator_Data\Managed\UnityEngine.Physics2DModule.dll</HintPath>
+    </Reference>
     <Reference Include="UnityEngine.TextRenderingModule">
       <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Spaceflight Simulator\Spaceflight Simulator Game\Spaceflight Simulator_Data\Managed\UnityEngine.TextRenderingModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.UI">
       <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Spaceflight Simulator\Spaceflight Simulator Game\Spaceflight Simulator_Data\Managed\UnityEngine.UI.dll</HintPath>
     </Reference>
+    <Reference Include="UnityEngine.UIModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Spaceflight Simulator\Spaceflight Simulator Game\Spaceflight Simulator_Data\Managed\UnityEngine.UIModule.dll</HintPath>
+    </Reference>
     <Reference Include="WorldBuild.Toolkit">
       <HintPath>..\WorldBuild.Toolkit\bin\Debug\WorldBuild.Toolkit.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AstronautSpawner.cs" />
-    <Compile Include="CapsuleOxygenVariableInjector.cs" />
+    <Compile Include="Debugger.cs" />
+    <Compile Include="Managers\AstronautResourcesHelper.cs" />
+    <Compile Include="Build\GUI.cs" />
+    <Compile Include="Build\Main.cs" />
+    <Compile Include="Build\Manager.cs" />
+    <Compile Include="Managers\AstronautSavingManager.cs" />
+    <Compile Include="Managers\AstronautSpawner.cs" />
+    <Compile Include="Managers\WorldManager.cs" />
+    <Compile Include="Managers\CapsuleOxygenVariableInjector.cs" />
     <Compile Include="CorrespondingTypes.cs" />
-    <Compile Include="CustomCredits.cs" />
+    <Compile Include="Managers\CustomCredits.cs" />
     <Compile Include="Entrypoint.cs" />
     <Compile Include="Managers\BaseManager.cs" />
     <Compile Include="Managers\Manager.cs" />
@@ -84,18 +99,21 @@
     <Compile Include="Modules\CapsuleOxygen.cs" />
     <Compile Include="Modules\InjectEverywhereWith.cs" />
     <Compile Include="Module.cs" />
-    <Compile Include="ModuleInjector.cs" />
+    <Compile Include="Managers\ModuleInjector.cs" />
     <Compile Include="Modules\Astronaut.cs" />
     <Compile Include="Modules\DrillModule.cs" />
     <Compile Include="Modules\IEWInjector.cs" />
     <Compile Include="Modules\RocketOxygen.cs" />
+    <Compile Include="Build\Patches.cs" />
+    <Compile Include="PartPriceCalculator.cs" />
     <Compile Include="Patches\CreatePartPatch.cs" />
     <Compile Include="Patches\DevSettingsPatch.cs" />
     <Compile Include="Patches\SavingPatch.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Build\Settings.cs" />
     <Compile Include="UI\AstronautManagementGUI.cs" />
     <Compile Include="UI\AstronautSpawnGUI.cs" />
-    <Compile Include="CapsuleScanner.cs" />
+    <Compile Include="Managers\CapsuleScanner.cs" />
     <Compile Include="UI\GUIBase.cs" />
     <Compile Include="UI\GUIManager.cs" />
     <Compile Include="Utility.cs" />

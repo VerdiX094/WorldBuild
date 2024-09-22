@@ -20,6 +20,8 @@ namespace WorldBuild.Mod.UI
         public abstract string SceneToAttach { get; }
         public abstract Func<bool> GOActiveCondition { get; }
 
+        protected int WindowID;
+
         public virtual void Begin() { }
         public virtual void GenerateGUI() { }
         public virtual void Update() { }
@@ -29,8 +31,14 @@ namespace WorldBuild.Mod.UI
             window.CreateLayoutGroup(SFS.UI.ModGUI.Type.Vertical, spacing: 8, padding: new RectOffset(0, 0, 8, 0));
         }
 
+        protected void HorizontalDefGroup()
+        {
+            window.CreateLayoutGroup(SFS.UI.ModGUI.Type.Horizontal, spacing: 8, padding: new RectOffset(0, 0, 8, 0));
+        }
+
         public GUIBase()
         {
+            WindowID = Builder.GetRandomID();
             SceneManager.sceneLoaded += (Scene s, LoadSceneMode lsm) =>
             {
                 if (s.name == SceneToAttach)
@@ -53,7 +61,7 @@ namespace WorldBuild.Mod.UI
         {
             if (holder == null)
             {
-                Debug.Log("Holder was null!");
+                Debugger.Log("Holder was null!");
                 return;
             }
 
@@ -87,7 +95,7 @@ namespace WorldBuild.Mod.UI
 
                 d++;
 
-                Debug.Log($"Generated the UI for the {d}th time");
+                Debugger.Log($"Generated the UI for the {d}th time");
             }
 
             holder.SetActive(newActive);

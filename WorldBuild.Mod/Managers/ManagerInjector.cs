@@ -20,10 +20,9 @@ namespace WorldBuild.Mod.Managers
             {
                 try
                 {
-                    if (type.BaseType.IsGenericType && type.BaseType.BaseType.GetGenericTypeDefinition() == typeof(Manager<>))
-                    {
-                        ManagerTypes.Add(type);
-                    }
+                    if (type.BaseType.BaseType.IsGenericType)
+                        if (type.BaseType.BaseType.GetGenericTypeDefinition() == typeof(Manager<>))
+                            ManagerTypes.Add(type);
                 } catch (NullReferenceException)
                 {
                     // do nothing, nullref is expected here
@@ -32,7 +31,7 @@ namespace WorldBuild.Mod.Managers
         }
 
         // this assumes that the type has already passed the double base type check
-        private static string[] GetScenesToAttach(Type type) => (string[]) type.GetProperty("ScenesToAttach").GetValue(null);
+        private static string[] GetScenesToAttach(Type type) => (string[]) type.GetProperty("ScenesToAttach", BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy).GetValue(null);
 
         private static void InjectToScene(Scene s)
         {
@@ -52,7 +51,8 @@ namespace WorldBuild.Mod.Managers
 
         public static void Inject()
         {
-            InjectToScene(SceneManager.GetSceneByName("Base_PC"));
+            FindTypes();
+            //InjectToScene(SceneManager.GetSceneByName("Base_PC"));
             SceneManager.sceneLoaded += (Scene s, LoadSceneMode lsm) =>
             {
                 InjectToScene(s);

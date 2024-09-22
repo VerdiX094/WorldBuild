@@ -5,6 +5,7 @@ using System.Reflection;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Cysharp.Threading.Tasks;
+using WorldBuild.Mod.Managers;
 
 namespace WorldBuild.Mod.Modules
 {
@@ -33,8 +34,10 @@ namespace WorldBuild.Mod.Modules
         {
             foreach (Type type in IEWTypes)
             {
-                SceneManager.GetAllScenes()
-                .ForEach(s =>
+                for (int i = 0; i < SceneManager.loadedSceneCount; i++)
+                {
+                    Scene s = SceneManager.GetSceneAt(i);
+
                     s.GetRootGameObjects()
                     .ForEach(obj =>
                         obj.GetComponentsInChildren(
@@ -43,26 +46,17 @@ namespace WorldBuild.Mod.Modules
                             if (comp.gameObject.GetComponent(type) == null)
                                 comp.gameObject.AddComponent(type);
                         }
-                        )
-                ));
+                    ));
+                }
             }
         }
-
-        private static void Refresh()
-        {
-            UniTask.RunOnThreadPool(() =>
-            {
-                ForceRefresh();
-            });
-        }
-
         IEnumerator InjectRoutine()
         {
             while (true)
             {
-                Refresh();
+                ForceRefresh();
 
-                yield return new WaitForSecondsRealtime(0.2f);
+                yield return new WaitForSecondsRealtime(0.1f);
             }
         }
     }

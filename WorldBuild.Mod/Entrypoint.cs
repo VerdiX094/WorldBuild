@@ -1,6 +1,9 @@
 ﻿using UnityEngine;
 using HarmonyLib;
 using WorldBuild.Mod.Managers;
+using ModLoader.Helpers;
+using System.Collections.Generic;
+using UnityEngine.SceneManagement;
 
 namespace WorldBuild.Mod
 {
@@ -15,10 +18,28 @@ namespace WorldBuild.Mod
 
         public static GameObject BaseGO;
 
+        public static Entrypoint main;
+
+        // fuck Early_Load
+        // or maybe not
         public Entrypoint()
+        {
+            main = this;
+        }
+
+        public override Dictionary<string, string> Dependencies => new Dictionary<string, string> { { "UITools", "1.1.5" } };
+
+        public override void Early_Load()
         {
             new Harmony("no.i.chuj").PatchAll();
             ManagerInjector.Inject();
+
+            Main.main = new Main();
+        }
+
+        public override void Load()
+        {
+            Main.main.Load();
         }
     }
 }

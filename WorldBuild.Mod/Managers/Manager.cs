@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace WorldBuild.Mod.Managers
 {
-    public abstract class Manager<T> : MonoBehaviour
+    public class Manager<T> : MonoBehaviour
         where T : Manager<T>
     {
         private static T m_main;

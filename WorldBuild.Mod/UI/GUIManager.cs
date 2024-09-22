@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Reflection;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using WorldBuild.Mod.Managers;
 
 namespace WorldBuild.Mod.UI
 {
@@ -15,7 +13,7 @@ namespace WorldBuild.Mod.UI
 
         void Start()
         {
-            Debug.Log("WorldBuild.Mod.UI.GUIManager init");
+            Debugger.Log("WorldBuild.Mod.UI.GUIManager init");
 
             foreach (Type type in Assembly.GetExecutingAssembly().GetTypes())
             {
@@ -30,7 +28,7 @@ namespace WorldBuild.Mod.UI
                 {
                     Base.SceneReqMet = Utility.CheckSceneLoaded(scene.name);
 
-                    if (Base.SceneReqMet) Debug.Log("Scene req met");
+                    if (Base.SceneReqMet) Debugger.Log("Scene req met");
                 });
             };
         }

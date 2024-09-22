@@ -12,39 +12,23 @@ using System.Threading.Tasks;
 using UnityEngine;
 using WorldBuild.Mod.Variables;
 
-namespace WorldBuild.Mod
+namespace WorldBuild.Mod.Managers
 {
-    public class CapsuleScanner : BaseManager<CapsuleScanner>
+    public class CapsuleScanner : WorldManager<CapsuleScanner>
     {
-        bool enab = false;
         private void Start()
         {
-            SceneHelper.OnWorldSceneLoaded += () =>
+            Screen_Game sg = GameManager.main.world_Input;
+
+            sg.onInputEnd += (OnInputEndData oied) =>
             {
-                enab = true;
+                if (!oied.click || oied.inputType != InputType.MouseRight) return;
 
-                Screen_Game sg = GameManager.main.world_Input;
-
-                sg.onInputStart = (OnInputStartData oisd) =>
-                {
-
-                };
-
-                sg.onInputEnd += (OnInputEndData oied) =>
-                {
-                    if (!oied.click || oied.inputType != InputType.MouseRight) return;
-
-                    OnRightClick(oied.position.World(0f));
-                };
-            };
-
-            SceneHelper.OnWorldSceneUnloaded += () =>
-            {
-                enab = false;
+                OnRightClick(oied.position.World(0f));
             };
         }
 
-        public Observable<BestCapsuleData> selectedCapsule;
+        public Observable<BestCapsuleData> selectedCapsule = new Observable<BestCapsuleData>();
 
         private void OnRightClick(Vector2 mouseWorldPosition)
         {
@@ -67,7 +51,7 @@ namespace WorldBuild.Mod
             //    Vector2 pt = (Vector2)part.transform.TransformPoint(part.transform.localPosition + Vector3.up);
 
             //    var thisDist = (mp - pt).magnitude;
-            //    Debug.Log(thisDist);
+            //    Debugger.Log(thisDist);
 
 
             //    var prevBestDist = float.MaxValue;
@@ -89,10 +73,16 @@ namespace WorldBuild.Mod
 
             var best = FindBest(PlayerController.main.player.Value as Rocket, mouseWorldPosition);
 
-            selectedCapsule.Value = best.cm == selectedCapsule.Value.cm ? new BestCapsuleData() : best;
+            if (best.cm == selectedCapsule.Value.cm)
+            {
+                selectedCapsule.Value = new BestCapsuleData() { cm = null };
+            } else
+            {
+                selectedCapsule.Value = new BestCapsuleData() { cm = best.cm };
+            }
         }
 
-        private BestCapsuleData FindBest(Rocket rocket, Vector2 position, float maxDistanceMultiplier = 1f)
+        public BestCapsuleData FindBest(Rocket rocket, Vector2 position, float maxDistanceMultiplier = 1f)
         {
             if (rocket == null) return new BestCapsuleData();
 
@@ -103,8 +93,6 @@ namespace WorldBuild.Mod
                 CrewModule crew = part.GetComponent<CrewModule>();
 
                 double dist = (position - GetGlobalCapsuleCenter(crew)).magnitude;
-
-                Debug.Log(dist);
 
                 if (dist >= capsuleData.GetDistanceTo(position) || dist > 1f * maxDistanceMultiplier) continue;
 
@@ -127,7 +115,6 @@ namespace WorldBuild.Mod
                 return (position - GetGlobalCapsuleCenter(cm)).magnitude;
             }
 
-            public bool CMNotNull() => cm != null;
             public Vector2 GetGlobalPosition()
             {
                 if (cm == null) return Vector2.positiveInfinity;
@@ -138,12 +125,31 @@ namespace WorldBuild.Mod
 
         private void Update()
         {
-            if (!enab) return;
+        }
+    }
 
-            if (selectedCapsule.Value.CMNotNull()) 
-            {
-                GLDrawer.DrawCircle(selectedCapsule.Value.GetGlobalPosition(), 0.25f, 32, Color.yellow);
-            }
+    public class CapsuleSelectVisualizer : WorldManager<CapsuleSelectVisualizer>, I_GLDrawer
+    {
+        public void Draw()
+        {
+            if (CapsuleScanner.main == null) return;
+
+            if (CapsuleScanner.main.selectedCapsule.Value.cm == null) return;
+
+            GLDrawer.DrawCircle(CapsuleScanner.main.selectedCapsule.Value.GetGlobalPosition(), 0.25f, 32, Color.green);
+        }
+
+        private void CheckAndRegister()
+        {
+            if (GLDrawer.main == null) return;
+            if (GLDrawer.main.drawers.Contains(this)) return;
+
+            GLDrawer.Register(this);
+        }
+
+        public void Update()
+        {
+            CheckAndRegister();
         }
     }
 }

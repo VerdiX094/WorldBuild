@@ -1,4 +1,6 @@
 ﻿using SFS.Career;
+using SFS.Translations;
+using SFS.UI;
 using SFS.World;
 using System.Linq;
 using System.Runtime.Remoting.Messaging;
@@ -6,22 +8,17 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using WorldBuild.Mod.Modules;
 using WorldBuild.Mod.UI;
-using static SFS.World.WorldSave.Astronauts;
 
-namespace WorldBuild.Mod
+namespace WorldBuild.Mod.Managers
 {
-    public class AstronautSpawner : BaseManager<AstronautSpawner>
+    public class AstronautSpawner : WorldManager<AstronautSpawner>
     {
-        private bool enab;
-
         private Rocket lastRocket;
 
         public bool isRocket
         {
             get
             {
-                if (!enab) return false;
-
                 return PlayerController.main.player.Value is Rocket;
             }
         }
@@ -57,52 +54,34 @@ namespace WorldBuild.Mod
 
         private void Start()
         {
-            SceneManager.sceneLoaded += (Scene s, LoadSceneMode lsm) =>
+            PlayerController.main.player.OnChange += (o, n) =>
             {
-                enab = CheckWorld();
+                if (n is Rocket rocket)
+                    lastRocket = rocket;
 
-                if (!enab) return;
-
-                // lazy :3
-                // fuck the fact that it will run as many checks as the number of times World was loaded during that game run
-
-                PlayerController.main.player.OnChange += (o, n) =>
-                {
-                    if (n is Rocket rocket)
-                        lastRocket = rocket;
-                };
+                if (n is Astronaut_EVA eva)
+                    Manager.main.EnterBuild();
+                else
+                    Manager.main.ExitBuild();
             };
         }
 
         private void Update()
         {
-            if (!enab) return;
-
-
         }
 
         public void StartEVA()
         {
-            // wtf was I thinking when writing this exact line? like wtf
-            //AstronautManager manager = GameObject.Find("Astronaut Manager").GetComponent<AstronautManager>();
-
-            if (AstronautState.main.GetAstronautByName("WorldBuild EVA") == null)
-                AstronautState.main.CreateAstronaut("WorldBuild EVA");
-            
-            var eva = AstronautManager.main.SpawnEVA("WorldBuild EVA", PlayerController.main.player.Value.location.Value, PlayerController.main.player.Value.transform.rotation.z, 0, false, 1, 0);
-            
-            var pos = CapsuleScanner.main.selectedCapsule.Value.GetGlobalPosition();
-
-            if (pos == null)
+            if (CapsuleScanner.main.selectedCapsule.Value.cm == null)
             {
-                AstronautManager.DestroyEVA(eva, false);
-
+                MsgDrawer.main.Log("No capsule selected!");
                 return;
             }
 
-            eva.transform.position = pos;
+            var player = PlayerController.main.player.Value;
+            var loc = player.location.Value;
 
-            IEWInjector.ForceRefresh();
+            var eva = StartAndGetEVA(new Location(loc.planet, WorldView.ToGlobalPosition(CapsuleScanner.main.selectedCapsule.Value.GetGlobalPosition()), loc.velocity), player.transform.rotation.z);
 
             Astronaut astronaut = eva.GetComponent<Astronaut>();
             AstronautManagementGUI.main.OnFrame(); // refresh gui so the elements can be added to dict
@@ -111,9 +90,10 @@ namespace WorldBuild.Mod
             {
                 // negotiate oxygen amount with the rocket
                 astronaut.oxygenSeconds = rocket.GetComponent<RocketOxygen>().RequestOxygen(astronaut.oxygenSeconds);
-            } else 
-            { 
-                return; 
+            }
+            else
+            {
+                return;
             }
 
             if (astronaut.oxygenSeconds == -1)
@@ -123,6 +103,24 @@ namespace WorldBuild.Mod
             }
 
             PlayerController.main.SmoothChangePlayer(eva);
+        }
+
+        public Astronaut_EVA StartAndGetEVA(Location loc, float rotation)
+        {
+            // wtf was I thinking when writing this exact line? like wtf
+            //AstronautManager manager = GameObject.Find("Astronaut Manager").GetComponent<AstronautManager>();
+
+            if (AstronautState.main.GetAstronautByName("WorldBuild EVA") == null)
+                AstronautState.main.CreateAstronaut("WorldBuild EVA");
+
+
+            var eva = AstronautManager.main.SpawnEVA("WorldBuild EVA",
+                loc,
+                rotation, 0, false, 1, 0);
+
+            IEWInjector.ForceRefresh();
+
+            return eva;
         }
 
         private bool CheckWorld() => Utility.CheckSceneLoaded("World_PC");

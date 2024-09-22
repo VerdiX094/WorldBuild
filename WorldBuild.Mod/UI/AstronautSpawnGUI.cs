@@ -1,13 +1,9 @@
 ﻿using SFS.UI.ModGUI;
 using SFS.World;
 using System;
-using System.Collections.Generic;
-using SFS.Variables;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using UnityEngine.SceneManagement;
 using UITools;
+using WorldBuild.Mod.Managers;
+using WorldBuild.Mod.Modules;
 
 namespace WorldBuild.Mod.UI
 {
@@ -31,7 +27,17 @@ namespace WorldBuild.Mod.UI
 
         public override void Update()
         {
-            
+            if (!elements.ContainsKey("oxygenAvail")) return;
+
+            var plr = PlayerController.main.player.Value;
+            if (plr == null) return;
+
+            var rox = plr.GetComponent<RocketOxygen>();
+            if (rox == null) return;
+
+            double timeLeft = rox.CalculateOxygenAvailable();
+
+            (elements["oxygenAvail"] as Label).Text = $"Available oxygen: {Utility.StringifyTime(timeLeft)}";
         }
 
         private void OnPlayerChange(Player oldP, Player newP)
@@ -52,7 +58,7 @@ namespace WorldBuild.Mod.UI
             }
 
             elements.Add("oxygenAvail", Builder.CreateLabel(
-                window, 352, 32, text: "Available oxygen: 0m 0s"
+                window, 352, 32, text: "Available oxygen: [not calculated yet]"
             ));
 
             elements.Add("spawnBtn", Builder.CreateButton(window, 352, 45, onClick: () =>

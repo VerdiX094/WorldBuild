@@ -4,7 +4,7 @@ using System;
 using UnityEngine;
 using WorldBuild.Toolkit;
 
-namespace WorldBuild.Mod
+namespace WorldBuild.Mod.Managers
 {
     public class ModuleInjector : BaseManager<ModuleInjector>
     {

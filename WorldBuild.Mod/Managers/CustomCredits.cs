@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
-namespace WorldBuild.Mod
+namespace WorldBuild.Mod.Managers
 {
     public class CustomCredits : BaseManager<CustomCredits>
     {
@@ -10,16 +10,16 @@ namespace WorldBuild.Mod
             "\n\n<size=80>--- WorldBuild developers ---</size>",
             "",
             "<size=70>Heroix</size>",
-            "<size=55>Project coordinator - voice actor</size>",
+            "<size=55>Project coordinator</size>",
             "",
             "<size=70>Dahzito</size>",
             "<size=55>Part pack developer</size>",
             "",
             "<size=70>Astro The Rabbit/pixelgaming579</size>",
-            "<size=55>Programmer</size>",
+            "<size=55>Programmer (World build)</size>",
             "",
             "<size=70>VerdiX/N2O4</size>",
-            "<size=55>Programmer</size>",
+            "<size=55>Programmer (Astronauts)</size>",
         };
 
         public void Update()

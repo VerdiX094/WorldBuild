@@ -27,7 +27,7 @@ namespace WorldBuild.Mod
 
         public static bool CheckSceneLoaded(string name)
         {
-            for (int i = 0; i < SceneManager.loadedSceneCount; i++)
+            for (int i = 0; i < SceneManager.sceneCount; i++)
             {
                 if (SceneManager.GetSceneAt(i).isLoaded)
                 if (SceneManager.GetSceneAt(i).name == name)
@@ -51,6 +51,19 @@ namespace WorldBuild.Mod
         public static Component GetOrAddComponent(this Component component, Type type)
         {
             return component.gameObject.GetComponent(type);
+        }
+
+        public static string StringifyTime(double seconds)
+        {
+            int hoursLeft = (int)(seconds / 3600);
+            int minutesLeft = (int)(seconds / 60 - hoursLeft * 60);
+            int secondsLeft = (int)(seconds - minutesLeft * 60 - hoursLeft * 3600);
+
+            string hoursLeftString = hoursLeft > 0 ? $"{hoursLeft}h " : "";
+            string minutesLeftString = hoursLeft > 0 || minutesLeft > 0 ? $"{minutesLeft}m " : "";
+            string secondsLeftString = $"{secondsLeft}s";
+
+            return string.Concat(hoursLeftString, minutesLeftString, secondsLeftString);
         }
     }
 }

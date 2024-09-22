@@ -1,9 +1,13 @@
-﻿using SFS.UI;
+﻿using SFS.Parts;
+using SFS.UI;
 using SFS.UI.ModGUI;
 using SFS.World;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
+using WorldBuild.Mod.Managers;
+using WorldBuild.Mod.Modules;
 
 namespace WorldBuild.Mod.UI
 {
@@ -25,14 +29,33 @@ namespace WorldBuild.Mod.UI
             main = this;
         }
 
+        public override void Update()
+        {
+
+            if (!(PlayerController.main.player.Value is Astronaut_EVA eva) || Elements["oxygenLeftApprox"] == null) return;
+
+            if (eva.GetComponent<Astronaut>() == null) return;
+
+            (Elements["oxygenLeftApprox"] as Label).Text = $"Oxygen left: {Utility.StringifyTime(eva.GetComponent<Astronaut>().GetOxygenSecondsLeft())}";
+        }
+
         public override void GenerateGUI() 
         {
-            window = Builder.CreateWindow(holder.transform, Builder.GetRandomID(), 384, 256, 300, 300, true, true, 0.95f, "Astronaut");
-            VerticalDefGroup();
+            window = Builder.CreateWindow(holder.transform, WindowID, 448, 280 + (Manager.main.worldBuildActive ? 56 : 0), 300, 300, true, true, 0.95f, "Astronaut");
+            HorizontalDefGroup();
+
+            elements.Add("main", Builder.CreateContainer(window));
+            (elements["main"] as Container).CreateLayoutGroup(SFS.UI.ModGUI.Type.Vertical, childAlignment: TextAnchor.UpperCenter, spacing: 8, padding: new RectOffset(0, 0, 8, 0));
+
+            elements.Add("keybindsHints", Builder.CreateContainer(window));
+            (elements["keybindsHints"] as Container).CreateLayoutGroup(SFS.UI.ModGUI.Type.Vertical, childAlignment: TextAnchor.UpperCenter, spacing: 8, padding: new RectOffset(0, 0, 8, 0));
+
+            #region Main
+            var main = elements["main"] as Container;
 
             elements.Add(
                 "plantFlag",
-                Builder.CreateButton(window, 352, 48, text: "Plant Flag", onClick: () =>
+                Builder.CreateButton(main, 352, 48, text: "Plant Flag", onClick: () =>
                 {
                     AstronautManager.main.PlantFlag();
                 }
@@ -40,69 +63,76 @@ namespace WorldBuild.Mod.UI
 
             elements.Add(
                 "endEVA",
-                Builder.CreateButton(window, 352, 48, text: "End EVA", onClick: () =>
+                Builder.CreateButton(main, 352, 48, text: "End EVA", onClick: () =>
                 {
-                    double distanceThreshold = 50f;
+                    CapsuleScanner.BestCapsuleData best = new CapsuleScanner.BestCapsuleData();
 
-                    Rocket bestRocket = null;
-                    double bestDistance = double.MaxValue;
+                    Vector2 pos = WorldView.ToLocalPosition(PlayerController.main.player.Value.location.position);
 
                     foreach (Rocket rocket in GameManager.main.rockets)
                     {
-                        if (!rocket.partHolder.parts.Any(part => part.Name == "Capsule")) continue;
+                        var data = CapsuleScanner.main.FindBest(rocket, pos, 3f);
 
-                        double distance = (rocket.location.position.Value - PlayerController.main.player.Value.location.position.Value).magnitude;
-
-                        if (distance > distanceThreshold) continue;
-                        
-                        if (distance > bestDistance) continue;
-                        
-                        bestRocket = rocket;
-                        bestDistance = distance;
+                        if (data.GetDistanceTo(pos) < best.GetDistanceTo(pos)) best.cm = data.cm;
                     }
                     
-                    if (bestRocket == null)
+                    if (best.cm == null)
                     {
-                        MsgDrawer.main.Log("No rocket with a capsule nearby!");
+                        MsgDrawer.main.Log("No capsule nearby!");
                         return;
                     }
 
-                    AstronautSpawner.main.EndEVA(bestRocket);
+                    CapsuleScanner.main.selectedCapsule.Value = best;
+
+                    AstronautSpawner.main.EndEVA(best.cm.Rocket);
                 }
             ));
 
-            #region Oxygen Bar
+            elements.Add(
+                "enterBuild",
+                Builder.CreateButton(main, 352, 48, text: Manager.main.worldBuildActive ? "Exit Build" : "Enter Build", onClick: () =>
+                {
+                    if (Manager.main.worldBuildActive)
+                        Manager.main.ExitBuild();
+                    else
+                        Manager.main.EnterBuild();
 
-            //elements.Add(
-            //    "oxygenBarContainer",W
-            //    Builder.CreateContainer(window)
-            //);
+                    NewGUI();
+                }
+            ));
 
-            //(elements["oxygenBarContainer"] as Container).CreateLayoutGroup(
-            //    SFS.UI.ModGUI.Type.Horizontal, 
-            //    padding: new RectOffset(16, 16, 0, 0));
+            if (Manager.main.worldBuildActive)
+                elements.Add(
+                    "placePart",
+                    Builder.CreateButton(main, 352, 48, text: "Place Part", onClick: () =>
+                    {
+                        Manager.main.TryBuildPart();
+                    }
+                ));
 
-            //elements.Add(
-            //    "oxygenBarLabel",
-            //    Builder.CreateLabel(elements["oxygenBarContainer"], 128, 48, text: "O2 left:")
-            //);
+            elements.Add("oxygenLeftApprox", Builder.CreateLabel(main, 352, 32, text: "Oxygen left: 0m 0s"));
+            #endregion
+            #region Keybind Hints
 
-            //elements.Add(
-            //    "oxygenBarSlider",
-            //    Builder.CreateSlider(elements["oxygenBarContainer"], 204, 100, (0, 100), 
-            //    getValueWithUnits: (float percent) =>
-            //    {
-            //        return "";
-            //    })
-            //);
+            var kh = elements["keybindsHints"] as Container;
 
-            //(elements["oxygenBarSlider"] as Slider)
-            //    .gameObject.GetComponentsInChildren<RectTransform>()
-            //    .Where(transform => transform.gameObject.name == "Handle").First().gameObject.SetActive(false);
+            elements.Add("plantFlagKB",
+                Builder.CreateLabel(kh, 56, 48, text: "F")
+            );
+
+            elements.Add("endEVAKB",
+                Builder.CreateLabel(kh, 56, 48, text: "Del")
+            );
+
+            elements.Add("switchBuildKB",
+                Builder.CreateLabel(kh, 56, 48, text: "B")
+            );
+
+            elements.Add("placePartKB",
+                Builder.CreateLabel(kh, 56, 48, text: "P")
+            );
 
             #endregion
-
-            elements.Add("oxygenLeftApprox", Builder.CreateLabel(window, 352, 32, text: "Oxygen left: 0m 0s"));
         }
     }
 }

@@ -17,9 +17,14 @@ namespace WorldBuild.Mod.Variables
             get => m_Value;
             set
             {
-                ValueChanged(m_Value, value);
+                if (value.Equals(m_Value)) return;
+
+                var oldValue = m_Value;
 
                 m_Value = value;
+
+                if (ValueChanged != null)
+                    ValueChanged(oldValue, value);
             }
         }
 

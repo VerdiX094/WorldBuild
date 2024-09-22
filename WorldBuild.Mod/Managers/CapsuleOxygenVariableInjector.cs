@@ -12,7 +12,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using WorldBuild.Mod.Modules;
 
-namespace WorldBuild.Mod
+namespace WorldBuild.Mod.Managers
 {
     public class CapsuleOxygenVariableInjector : BaseManager<CapsuleOxygenVariableInjector>
     {
@@ -23,7 +23,7 @@ namespace WorldBuild.Mod
 
             foreach (Part capsule in capsules)
             {
-                Debug.Log("chuj kurwa");
+                Debugger.Log("chuj kurwa");
                 var varMod = capsule.GetComponent<VariablesModule>();
 
                 varMod.doubleVariables.SetValue("oxygen", CapsuleOxygen.MaxOxygen, (true, true));

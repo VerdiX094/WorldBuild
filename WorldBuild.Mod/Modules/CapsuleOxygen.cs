@@ -1,15 +1,5 @@
-﻿using Cysharp.Threading.Tasks.Triggers;
-using SFS.Parts;
-using SFS.Sharing;
-using SFS.Variables;
+﻿using SFS.Variables;
 using SFS.World;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using UnityEngine;
-using UnityEngine.SceneManagement;
 
 namespace WorldBuild.Mod.Modules
 {
@@ -29,9 +19,10 @@ namespace WorldBuild.Mod.Modules
         {
             varMod = GetComponent<VariablesModule>();
 
-            if (SceneManager.GetActiveScene().name == "Build_PC" && !varMod.boolVariables.GetValue("oxygenInitialized"))
+            if (Utility.CheckSceneLoaded("Build_PC") && !varMod.boolVariables.GetValue("oxygenInitialized"))
             {
                 Oxygen = MaxOxygen;
+                varMod.boolVariables.SetValue("oxygenInitialized", true);
             }
         }
     }
