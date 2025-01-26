@@ -1,16 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using HarmonyLib;
+﻿using HarmonyLib;
 using SFS;
 using SFS.IO;
-using SFS.UI;
 using SFS.World;
-using SFS.WorldBase;
-using WorldBuild.Mod.Managers;
+using WorldBuild.Mod.Saving;
 
 namespace WorldBuild.Mod.Patches
 {
@@ -20,7 +12,7 @@ namespace WorldBuild.Mod.Patches
         [HarmonyPostfix]
         public static void Postfix(FolderPath path, bool saveRocketsAndBranches, WorldSave worldSave, bool isCareer)
         {
-            AstronautSavingManager.main.Save(path, worldSave);
+            AstronautSavingManager.main.OnSave(path);
         }
     }
     [HarmonyPatch(typeof(WorldSave), nameof(WorldSave.TryLoad))]
@@ -29,8 +21,7 @@ namespace WorldBuild.Mod.Patches
         [HarmonyPostfix]
         public static void Postfix(FolderPath path, bool loadRocketsAndBranches, I_MsgLogger logger, ref WorldSave worldSave)
         {
-            AstronautSavingManager.main.lastPath = path;
-            AstronautSavingManager.main.LASRequest = true;
+            AstronautSavingManager.main.OnLoad(path);
         }
     }
 }

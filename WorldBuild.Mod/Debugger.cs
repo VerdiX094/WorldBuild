@@ -1,17 +1,24 @@
-﻿using UnityEngine;
-using System;
+﻿using System;
+using System.Diagnostics;
+using Debug = UnityEngine.Debug;
 
 namespace WorldBuild.Mod
 {
     public static class Debugger
     {
-        public static bool IsDebugEnabled = true;
+        private const bool IsDebugEnabled = true;
 
+        private static object FormatMessage(object msg)
+        {
+            var frame = new StackTrace().GetFrame(2);
+            return msg + "\n Calling Method:\n" + frame.GetMethod().Name + " in class: " + frame.GetMethod().ReflectedType?.Name;
+        }
+        
         public static void Log(object message, bool overrideDE = false)
         {
             if (!IsDebugEnabled && !overrideDE) return;
 
-            Debug.Log(message);
+            Debug.Log(FormatMessage(message));
         }
 
         public static void LogException(Exception ex, bool overrideDE = false)
@@ -25,14 +32,14 @@ namespace WorldBuild.Mod
         {
             if (!IsDebugEnabled && !overrideDE) return;
 
-            Debug.LogError(message);
+            Debug.LogError(FormatMessage(message));
         }
 
         public static void LogWarning(object message, bool overrideDE = false)
         {
             if(!IsDebugEnabled && !overrideDE) return;
 
-            Debug.LogWarning(message);
+            Debug.LogWarning(FormatMessage(message));
         }
     }
 }

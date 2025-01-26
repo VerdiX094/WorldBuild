@@ -16,7 +16,7 @@ namespace WorldBuild.Mod.Managers
 
         private static void FindTypes()
         {
-            foreach (Type type in Assembly.GetExecutingAssembly().GetTypes())
+            foreach (var type in Assembly.GetExecutingAssembly().GetTypes())
             {
                 try
                 {

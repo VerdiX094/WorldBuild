@@ -35,10 +35,10 @@ namespace WorldBuild.Mod.Modules
 
             if (result < 30)
             {
-                MsgDrawer.main.Log("Not enough oxygen for at least 30 seconds of EVA");
                 return -1;
             }
-            else if (result < amount - 0.001)
+            
+            if (result < amount - 0.001)
             {
                 MsgDrawer.main.Log($"Not enough oxygen for full {(int)amount.Round(0)} seconds of EVA,\nstarting EVA with {result}s instead");
             }
@@ -50,9 +50,9 @@ namespace WorldBuild.Mod.Modules
             // run this again, if the check succeeded
             requestedLeft = amount;
 
-            foreach (CapsuleOxygen co in GetComponentsInChildren<CapsuleOxygen>())
+            foreach (var co in GetComponentsInChildren<CapsuleOxygen>())
             {
-                double avail = Math.Min(requestedLeft, co.Oxygen);
+                var avail = Math.Min(requestedLeft, co.Oxygen);
 
                 requestedLeft -= avail;
 
@@ -93,7 +93,7 @@ namespace WorldBuild.Mod.Modules
             }
 
             if (logWaste && oxygenLeft > 1)
-                MsgDrawer.main.Log($"The rocket's oxygen tanks are full, {oxygenLeft}s of oxygen was wasted.");
+                MsgDrawer.main.Log($"The rocket's oxygen tanks are full, {oxygenLeft.Round(0)}s of oxygen was wasted.");
 
 
             return oxygenLeft.Round(3);

@@ -247,7 +247,7 @@ namespace WorldBuild
                     WorldTime.main.worldTime,
                     WorldView.main.ViewLocation.planet,
                     WorldView.ToGlobalPosition(heldPart.transform.position),
-                    Double2.zero
+                    PlayerController.main.player.Value.location.velocity
                 ),
                 false
             );
@@ -263,14 +263,14 @@ namespace WorldBuild
 
         public void SetPartColor(Color color)
         {
-            if (heldPart != null)
+            if (heldPart)
             {
-                foreach (BaseMesh partMesh in heldPart.GetModules<BaseMesh>())
+                foreach (var partMesh in heldPart.GetModules<BaseMesh>())
                 {
-                    Mesh mesh = AccessTools.FieldRefAccess<BaseMesh, Mesh>("meshReference").Invoke(partMesh);
+                    var mesh = AccessTools.FieldRefAccess<BaseMesh, Mesh>("meshReference").Invoke(partMesh);
                     if (!defaultMeshColors.ContainsKey(mesh))
                     {
-                        List<Color32> colors = new List<Color32>();
+                        var colors = new List<Color32>();
                         mesh.GetColors(colors);
                         defaultMeshColors.Add(mesh, colors);
                     }

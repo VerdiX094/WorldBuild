@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using WorldBuild.Mod.UI;
 using WorldBuild.Mod.Managers;
+using WorldBuild.Mod.Saving;
 using SFS.UI;
 
 namespace WorldBuild.Mod.Modules
@@ -54,15 +55,15 @@ namespace WorldBuild.Mod.Modules
                 startTime += WorldTime.main.timewarpSpeed * Time.deltaTime;
             }
 
-            AstronautResourcesHelper.data.position = loc.position;
-            AstronautResourcesHelper.data.speed = loc.velocity;
-            AstronautResourcesHelper.data.planetName = loc.planet.codeName;
-            AstronautResourcesHelper.data.inEva = true;
-            AstronautResourcesHelper.data.fuelPercent = TargetComponent.resources.fuelPercent.Value;
-            AstronautResourcesHelper.data.oxygen = GetOxygenSecondsLeft();
-            AstronautResourcesHelper.data.temperature = TargetComponent.resources.temperature.Value;
-            AstronautResourcesHelper.data.rotationSpeed = TargetComponent.rb2d.angularVelocity;
-            AstronautResourcesHelper.data.materialLeft = 0f; // TODO
+            AstronautDataHelper.main.SaveData.position = loc.position;
+            AstronautDataHelper.main.SaveData.speed = loc.velocity;
+            AstronautDataHelper.main.SaveData.planetName = loc.planet.codeName;
+            AstronautDataHelper.main.SaveData.inEva = true;
+            AstronautDataHelper.main.SaveData.fuelPercent = TargetComponent.resources.fuelPercent.Value;
+            AstronautDataHelper.main.SaveData.oxygen = GetOxygenSecondsLeft();
+            AstronautDataHelper.main.SaveData.temperature = TargetComponent.resources.temperature.Value;
+            AstronautDataHelper.main.SaveData.rotationSpeed = TargetComponent.rb2d.angularVelocity;
+            AstronautDataHelper.main.SaveData.materialLeft = 0f; // TODO
 
             //(AstronautManagementGUI.main.Elements["oxygenBarSlider"] as Slider).Value = (float) (GetOxygenSecondsLeft() / oxygenSeconds) * 100;
         }

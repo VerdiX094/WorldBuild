@@ -18,7 +18,7 @@ namespace WorldBuild.Mod.Managers
             "<size=70>Astro The Rabbit/pixelgaming579</size>",
             "<size=55>Programmer (World build)</size>",
             "",
-            "<size=70>VerdiX/N2O4</size>",
+            "<size=70>VerdiX094/N2O4</size>",
             "<size=55>Programmer (Astronauts)</size>",
         };
 
@@ -26,11 +26,11 @@ namespace WorldBuild.Mod.Managers
         {
             GameObject go = GameObject.Find("Read Menu");
 
-            if (go == null) return;
+            if (!go) return;
 
             Text text = go.GetComponentInChildren<Text>();
 
-            if (text == null) return;
+            if (!text) return;
 
             if (text.text.Contains(lines[0]) || !text.text.Contains("Designer - Programmer - Artist")) return;
 

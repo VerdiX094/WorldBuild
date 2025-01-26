@@ -30,14 +30,20 @@ namespace WorldBuild.Mod.UI
             if (!elements.ContainsKey("oxygenAvail")) return;
 
             var plr = PlayerController.main.player.Value;
-            if (plr == null) return;
+            if (!plr) return;
 
             var rox = plr.GetComponent<RocketOxygen>();
-            if (rox == null) return;
+            if (!rox) return;
 
             double timeLeft = rox.CalculateOxygenAvailable();
 
-            (elements["oxygenAvail"] as Label).Text = $"Available oxygen: {Utility.StringifyTime(timeLeft)}";
+            if (!(elements["oxygenAvail"] is Label label))
+            {
+                Debugger.LogError("oxygenAvail was not of the correct type");
+                return;
+            }
+            
+            label.Text = $"Available oxygen: {Utility.StringifyTime(timeLeft)}";
         }
 
         private void OnPlayerChange(Player oldP, Player newP)
@@ -50,21 +56,30 @@ namespace WorldBuild.Mod.UI
             window = UIToolsBuilder.CreateClosableWindow(holder.transform, Builder.GetRandomID(), 384, 256, 300, 300, true, true, 0.95f, "Astronaut Manager");
             VerticalDefGroup();
 
-            if (CapsuleScanner.main.selectedCapsule.Value.cm == null)
+            if (AstronautManager.main.eva.Count == 0)
             {
-                elements.Add("selectNote", Builder.CreateLabel(window, 352, 32, text: "Select a capsule first! (click one with RMB)"));
-                window.Size = new UnityEngine.Vector2(window.Size.x, 128);
-                return;
+                if (CapsuleScanner.main.selectedCapsule.Value.cm == null)
+                {
+                    elements.Add("selectNote", Builder.CreateLabel(window, 352, 32, text: "Select a capsule first! (click one with RMB)"));
+                    window.Size = new UnityEngine.Vector2(window.Size.x, 128);
+                    return;
+                }
+
+                elements.Add("oxygenAvail", Builder.CreateLabel(
+                    window, 352, 32, text: "Available oxygen: [not calculated yet]"
+                ));
+
+                elements.Add("spawnBtn", Builder.CreateButton(window, 352, 45, onClick: () =>
+                {
+                    AstronautSpawner.main.StartEVA();
+                }, text: "Start EVA"));
+            } else
+            {
+                elements.Add("switchToRkt", Builder.CreateButton(window, 352, 45, onClick: () =>
+                {
+                    PlayerController.main.SmoothChangePlayer(AstronautManager.main.eva[0]);
+                }, text: "Switch to astronaut"));
             }
-
-            elements.Add("oxygenAvail", Builder.CreateLabel(
-                window, 352, 32, text: "Available oxygen: [not calculated yet]"
-            ));
-
-            elements.Add("spawnBtn", Builder.CreateButton(window, 352, 45, onClick: () =>
-            {
-                AstronautSpawner.main.StartEVA();
-            }, text: "Start EVA"));
         }
     }
 }
