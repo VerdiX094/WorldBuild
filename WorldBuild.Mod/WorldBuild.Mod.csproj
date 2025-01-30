@@ -312,7 +312,7 @@
     <Compile Include="Debugger.cs" />
     <Compile Include="Build\GUI.cs" />
     <Compile Include="Build\Main.cs" />
-    <Compile Include="Build\Manager.cs" />
+    <Compile Include="Build\BuildManager.cs" />
     <Compile Include="Managers\AstronautSpawner.cs" />
     <Compile Include="Managers\WorldManager.cs" />
     <Compile Include="Managers\CapsuleOxygenVariableInjector.cs" />

@@ -9,6 +9,6 @@ namespace WorldBuild.Mod.Modules
 {
     public class InjectEverywhereWith<T> : MonoBehaviour where T : Component 
     {
-        public T TargetComponent => GetComponent<T>();
+        protected T TargetComponent => GetComponent<T>();
     }
 }

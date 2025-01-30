@@ -9,6 +9,7 @@ using UnityEngine.SceneManagement;
 using WorldBuild.Mod.Modules;
 using WorldBuild.Mod.Saving;
 using WorldBuild.Mod.UI;
+using WorldBuild.Mod.Build;
 
 namespace WorldBuild.Mod.Managers
 {
@@ -63,16 +64,13 @@ namespace WorldBuild.Mod.Managers
                 if (n is Rocket rocket)
                     lastRocket = rocket;
 
-                if (n is Astronaut_EVA eva)
-                    Manager.main.EnterBuild();
-                else
-                    Manager.main.ExitBuild();
+                if (!(n is Astronaut_EVA))
+                    BuildManager.main.ExitBuild();
             };
             
             AstronautSavingManager.main.OnAstronautSpawnerInitialized();
         }
         
-
         public void StartEVA()
         {
             if (CapsuleScanner.main.selectedCapsule.Value.cm == null)

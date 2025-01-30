@@ -1,4 +1,5 @@
 ﻿using System;
+using UnityEngine.Serialization;
 
 namespace WorldBuild.Mod.Saving
 {
@@ -6,7 +7,7 @@ namespace WorldBuild.Mod.Saving
     public struct AstronautSaveData
     { 
         public bool evaActive;
-        public bool inEva;
+        [FormerlySerializedAs("inEva")] public bool isCurrentPlayer;
         public Double2 position;
         public Double2 speed;
         public string planetName;

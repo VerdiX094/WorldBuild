@@ -11,13 +11,12 @@ using SFS.Parts;
 using SFS.Cameras;
 using SFS.Parts.Modules;
 using static SFS.Builds.BuildGrid;
-using WorldBuild.GUI;
 
-namespace WorldBuild
+namespace WorldBuild.Mod.Build
 {
-    public class Manager : MonoBehaviour
+    public class BuildManager : MonoBehaviour
     {
-        public static Manager main;
+        public static BuildManager main;
         public bool worldBuildActive;
         public bool draggingPart;
 

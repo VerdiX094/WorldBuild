@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using WorldBuild.Mod.Build;
 using WorldBuild.Mod.Managers;
 using WorldBuild.Mod.Modules;
 
@@ -41,7 +42,7 @@ namespace WorldBuild.Mod.UI
 
         public override void GenerateGUI() 
         {
-            window = Builder.CreateWindow(holder.transform, WindowID, 448, 280 + (Manager.main.worldBuildActive ? 56 : 0), 300, 300, true, true, 0.95f, "Astronaut");
+            window = Builder.CreateWindow(holder.transform, WindowID, 448, 280 + (BuildManager.main.worldBuildActive ? 56 : 0), 300, 300, true, true, 0.95f, "Astronaut");
             HorizontalDefGroup();
 
             elements.Add("main", Builder.CreateContainer(window));
@@ -90,23 +91,23 @@ namespace WorldBuild.Mod.UI
 
             elements.Add(
                 "enterBuild",
-                Builder.CreateButton(main, 352, 48, text: Manager.main.worldBuildActive ? "Exit Build" : "Enter Build", onClick: () =>
+                Builder.CreateButton(main, 352, 48, text: BuildManager.main.worldBuildActive ? "Exit Build" : "Enter Build", onClick: () =>
                 {
-                    if (Manager.main.worldBuildActive)
-                        Manager.main.ExitBuild();
+                    if (BuildManager.main.worldBuildActive)
+                        BuildManager.main.ExitBuild();
                     else
-                        Manager.main.EnterBuild();
+                        BuildManager.main.EnterBuild();
 
                     NewGUI();
                 }
             ));
 
-            if (Manager.main.worldBuildActive)
+            if (BuildManager.main.worldBuildActive)
                 elements.Add(
                     "placePart",
                     Builder.CreateButton(main, 352, 48, text: "Place Part", onClick: () =>
                     {
-                        Manager.main.TryBuildPart();
+                        BuildManager.main.TryBuildPart();
                     }
                 ));
 

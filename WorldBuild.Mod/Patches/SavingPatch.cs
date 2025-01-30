@@ -21,7 +21,8 @@ namespace WorldBuild.Mod.Patches
         [HarmonyPostfix]
         public static void Postfix(FolderPath path, bool loadRocketsAndBranches, I_MsgLogger logger, ref WorldSave worldSave)
         {
-            AstronautSavingManager.main.OnLoad(path);
+            if (loadRocketsAndBranches)
+                AstronautSavingManager.main.OnLoad(path);
         }
     }
 }

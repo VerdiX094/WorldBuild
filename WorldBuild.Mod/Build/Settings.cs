@@ -4,7 +4,7 @@ using ModLoader.Helpers;
 using static SFS.Input.KeybindingsPC;
 using WorldBuild.Mod;
 
-namespace WorldBuild.Settings
+namespace WorldBuild.Mod.Build
 {
     // public class Config : ModSettings<ConfigData>
     // {

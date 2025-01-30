@@ -5,10 +5,8 @@ using UITools;
 using SFS.IO;
 using ModLoader;
 using ModLoader.Helpers;
-using WorldBuild.GUI;
-using WorldBuild.Settings;
 
-namespace WorldBuild
+namespace WorldBuild.Mod.Build
 {
     public class Main
     {
@@ -20,11 +18,11 @@ namespace WorldBuild
 
             GameObject go = new GameObject("World Build: Manager");
             Object.DontDestroyOnLoad(go);
-            Manager.main = go.AddComponent<Manager>();
+            BuildManager.main = go.AddComponent<BuildManager>();
 
-            SceneHelper.OnWorldSceneLoaded += Manager.main.AddInputs;
+            SceneHelper.OnWorldSceneLoaded += BuildManager.main.AddInputs;
             SceneHelper.OnWorldSceneLoaded += PartPickerUI.DestroyCreatedParts;
-            SceneHelper.OnWorldSceneUnloaded += () => Manager.main.worldBuildActive = false;
+            SceneHelper.OnWorldSceneUnloaded += () => BuildManager.main.worldBuildActive = false;
         }
     }
 }

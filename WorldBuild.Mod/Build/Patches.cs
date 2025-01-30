@@ -6,7 +6,7 @@ using System;
 using UnityEngine;
 using UnityEngine.Rendering;
 
-namespace WorldBuild.Patches
+namespace WorldBuild.Mod.Build
 {
     public static class Patches
     {
@@ -18,7 +18,7 @@ namespace WorldBuild.Patches
         {
             static bool Prefix()
             {
-                return !Manager.main.draggingPart;
+                return !BuildManager.main.draggingPart;
             }
         }
 
@@ -30,7 +30,7 @@ namespace WorldBuild.Patches
         {
             static bool Prefix()
             {
-                return !Manager.main.worldBuildActive;
+                return !BuildManager.main.worldBuildActive;
             }
         }
 
@@ -42,7 +42,7 @@ namespace WorldBuild.Patches
         {
             static void Postfix()
             {
-                Manager.main.ExitBuild();
+                BuildManager.main.ExitBuild();
             }
         }
 
@@ -54,7 +54,7 @@ namespace WorldBuild.Patches
         {
             static void Prefix()
             {
-                Manager.main.ExitBuild();
+                BuildManager.main.ExitBuild();
             }
         }
     }

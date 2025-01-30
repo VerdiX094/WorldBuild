@@ -1,12 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using SFS.UI.ModGUI;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using WorldBuild.Toolkit;
+using Type = System.Type;
 
 namespace WorldBuild.Mod
 {
@@ -64,6 +65,27 @@ namespace WorldBuild.Mod
             string secondsLeftString = $"{secondsLeft}s";
 
             return string.Concat(hoursLeftString, minutesLeftString, secondsLeftString);
+        }
+
+        public static Vector2Int ToCenterAnchor(Vector2Int topLeftCoords)
+        {
+            return topLeftCoords + new Vector2Int((int)GetCanvasSize().x, (int)GetCanvasSize().y) / 2;
+        }
+        
+        private static RectTransform canvas;
+        
+        private static Vector2 GetCanvasSize()
+        {
+            canvas = canvas ?? GetCanvasRect();
+            return canvas.sizeDelta;
+        }
+        
+        private static RectTransform GetCanvasRect()
+        {
+            GameObject temp = Builder.CreateHolder(Builder.SceneToAttach.BaseScene, "TEMP");
+            var result = temp.transform.parent as RectTransform;
+            Object.Destroy(temp);
+            return result;
         }
     }
 }

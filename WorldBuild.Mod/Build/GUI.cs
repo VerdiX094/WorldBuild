@@ -15,18 +15,17 @@ using ModButton = SFS.UI.ModGUI.Button;
 using SFS.Input;
 using WorldBuild.Mod;
 
-namespace WorldBuild.GUI
+namespace WorldBuild.Mod.Build
 {
     public static class PartPickerUI
     {
         public static Transform GUIHolder;
-        public static readonly Vector2Int size_main = new Vector2Int(400, 1000);
-        public static readonly Vector2Int size_categories = new Vector2Int(240, 950);
+        public static readonly Vector2Int size_categories = new Vector2Int(256, 640);
         public static readonly Vector2Int size_parts = new Vector2Int(140, 950);
         public static readonly int id_main = Builder.GetRandomID();
         public static readonly int id_categories = Builder.GetRandomID();
         public static readonly int id_parts = Builder.GetRandomID();
-        public static ClosableWindow window_main;
+        public static GameObject partWindowHolder;
         public static Window window_categories;
         public static Window window_parts;
         public static ModButton button_selectedCategory = null;
@@ -52,7 +51,6 @@ namespace WorldBuild.GUI
         // };
         public static Transform createdPartsHolder;
         public static Dictionary<VariantRef, Part> createdParts = new Dictionary<VariantRef, Part>();
-
         public static void CreateUI()
         {
             if (pickCategories == null)
@@ -70,18 +68,6 @@ namespace WorldBuild.GUI
             DestroyUI();
 
             GUIHolder = Builder.CreateHolder(Builder.SceneToAttach.CurrentScene, "WorldBuild: UI Holder").transform;
-            window_main = UIToolsBuilder.CreateClosableWindow
-            (
-                GUIHolder,
-                id_main,
-                size_main.x,
-                size_main.y,
-                draggable: true,
-                opacity: 0.5f,
-                titleText: "World Build"
-            );
-            window_main.RegisterPermanentSaving($"{Entrypoint.main.ModNameID}.pickgrid");
-            window_main.CreateLayoutGroup(Type.Horizontal, TextAnchor.UpperCenter, 5f, new RectOffset(5, 5, 5, 5));
             CreateCategoriesUI();
             CreatePartsUI();
         }
@@ -92,14 +78,16 @@ namespace WorldBuild.GUI
             {
                 Object.Destroy(window_categories.gameObject);
             }
-            window_categories = Builder.CreateWindow
+            window_categories = UIToolsBuilder.CreateClosableWindow
             (
-                window_main,
+                GUIHolder,
                 id_categories,
                 size_categories.x,
                 size_categories.y,
-                savePosition: false,
-                opacity: 0.5f
+                savePosition: true,
+                draggable: true,
+                opacity: 0.95f,
+                titleText: "Categories"
             );
             window_categories.CreateLayoutGroup(Type.Vertical, TextAnchor.UpperCenter, 10f, new RectOffset(5, 5, 5, 5));
             window_categories.EnableScrolling(Type.Vertical);
@@ -143,12 +131,13 @@ namespace WorldBuild.GUI
             }
             window_parts = Builder.CreateWindow
             (
-                window_main,
+                GUIHolder,
                 id_parts,
                 size_parts.x,
                 size_parts.y,
+                draggable: true,
                 savePosition: false,
-                opacity: 0.5f
+                opacity: 0.95f
             );
             window_parts.CreateLayoutGroup(Type.Vertical, TextAnchor.UpperCenter, 10f, new RectOffset(5, 5, 5, 5));
             window_parts.EnableScrolling(Type.Vertical);
@@ -167,8 +156,8 @@ namespace WorldBuild.GUI
                     Button button = CreatePartIcon(window_parts, part);
                     button.onHold += (OnInputStayData data) =>
                     {
-                        if (data.inputType == InputType.MouseLeft && !Manager.main.draggingPart)
-                            Manager.main.CreateNewPart(variant, data.position.World(0f));
+                        if (data.inputType == InputType.MouseLeft && !BuildManager.main.draggingPart)
+                            BuildManager.main.CreateNewPart(variant, data.position.World(0f));
                     };
                     button.onClick += () => Debugger.Log("TODO: Part info box.");
                     button.onRightClick += () => Debugger.Log("TODO: Part info box.");

@@ -58,7 +58,7 @@ namespace WorldBuild.Mod.Modules
             AstronautDataHelper.main.SaveData.position = loc.position;
             AstronautDataHelper.main.SaveData.speed = loc.velocity;
             AstronautDataHelper.main.SaveData.planetName = loc.planet.codeName;
-            AstronautDataHelper.main.SaveData.inEva = true;
+            AstronautDataHelper.main.SaveData.isCurrentPlayer = true;
             AstronautDataHelper.main.SaveData.fuelPercent = TargetComponent.resources.fuelPercent.Value;
             AstronautDataHelper.main.SaveData.oxygen = GetOxygenSecondsLeft();
             AstronautDataHelper.main.SaveData.temperature = TargetComponent.resources.temperature.Value;

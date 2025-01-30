@@ -4,6 +4,7 @@ using SFS.World;
 using UnityEngine;
 using WorldBuild.Mod.Managers;
 using UnityEngine.UI;
+using WorldBuild.Mod.Build;
 
 namespace WorldBuild.Mod.UI
 {
@@ -15,7 +16,7 @@ namespace WorldBuild.Mod.UI
 
         private void Start()
         {
-            Manager.main.ExitBuild();
+            BuildManager.main.ExitBuild();
             
             var panel = GameObject.Find("Top Left Panel");
             foreach (TextAdapter text in panel.GetComponentsInChildren<TextAdapter>())
@@ -36,7 +37,7 @@ namespace WorldBuild.Mod.UI
             
             var buttonPC = helpBtn.GetComponent<ButtonPC>();
             buttonPC.onClick.Clear();
-            buttonPC.onClick += Manager.main.ToggleBuild;
+            buttonPC.onClick += BuildManager.main.ToggleBuild;
             
             bpc = buttonPC;
         }
@@ -44,7 +45,7 @@ namespace WorldBuild.Mod.UI
         private void Update()
         {
             helpBtn.SetActive(PlayerController.main.player.Value is Astronaut_EVA);
-            bpc.SetSelected(Manager.main.worldBuildActive);
+            bpc.SetSelected(BuildManager.main.worldBuildActive);
         }
     }
 }

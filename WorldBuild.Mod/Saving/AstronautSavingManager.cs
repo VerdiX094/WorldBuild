@@ -29,7 +29,7 @@ namespace WorldBuild.Mod.Saving
                 return;
             }
 
-            if (!data.inEva) return;
+            if (!data.isCurrentPlayer) return;
             
             PlayerController.main.player.Value = eva;
         }
