@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using GUIElement = SFS.UI.ModGUI.GUIElement;
 
 namespace WorldBuild.Mod.UI
 {

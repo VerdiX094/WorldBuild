@@ -72,6 +72,7 @@ namespace WorldBuild.Mod.UI
                 elements.Add("spawnBtn", Builder.CreateButton(window, 352, 45, onClick: () =>
                 {
                     AstronautSpawner.main.StartEVA();
+                    (elements["spawnBtn"] as Button).SetSelected(false);
                 }, text: "Start EVA"));
             } else
             {

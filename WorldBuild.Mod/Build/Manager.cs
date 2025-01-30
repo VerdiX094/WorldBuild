@@ -246,7 +246,7 @@ namespace WorldBuild
                 (
                     WorldTime.main.worldTime,
                     WorldView.main.ViewLocation.planet,
-                    WorldView.ToGlobalPosition(heldPart.transform.position),
+                    WorldView.ToGlobalPosition((Vector2)heldPart.transform.position + heldPart.centerOfMass.Value),
                     PlayerController.main.player.Value.location.velocity
                 ),
                 false

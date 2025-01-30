@@ -26,7 +26,6 @@ namespace WorldBuild.Mod.Modules
         private void Start()
         {
             startTime = WorldTime.main.worldTime;
-
             //StartCoroutine(nameof(TimeEstimateTextCoro));
         }
 
@@ -41,6 +40,7 @@ namespace WorldBuild.Mod.Modules
             {
                 MsgDrawer.main.Log("WorldBuild astronaut is dead");
                 AstronautSpawner.main.EndEVAAndReturnToRocket(true);
+                TargetComponent.astronaut.alive = true;
             }
 
             Location loc = TargetComponent.location.Value;
