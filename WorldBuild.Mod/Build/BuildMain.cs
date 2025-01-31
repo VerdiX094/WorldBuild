@@ -8,9 +8,9 @@ using ModLoader.Helpers;
 
 namespace WorldBuild.Mod.Build
 {
-    public class Main
+    public class BuildMain
     {
-        public static Main main;
+        public static BuildMain buildMain;
 
         public void Load()
         {

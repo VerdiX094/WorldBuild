@@ -310,8 +310,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Debugger.cs" />
-    <Compile Include="Build\GUI.cs" />
-    <Compile Include="Build\Main.cs" />
+    <Compile Include="Build\PartPickerUI.cs" />
+    <Compile Include="Build\BuildMain.cs" />
     <Compile Include="Build\BuildManager.cs" />
     <Compile Include="Managers\AstronautSpawner.cs" />
     <Compile Include="Managers\WorldManager.cs" />

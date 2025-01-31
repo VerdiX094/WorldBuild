@@ -32,7 +32,6 @@ namespace WorldBuild.Mod.UI
 
         public override void Update()
         {
-
             if (!(PlayerController.main.player.Value is Astronaut_EVA eva) || Elements["oxygenLeftApprox"] == null) return;
 
             if (eva.GetComponent<Astronaut>() == null) return;
@@ -89,27 +88,11 @@ namespace WorldBuild.Mod.UI
                 }
             ));
 
-            elements.Add(
-                "enterBuild",
-                Builder.CreateButton(main, 352, 48, text: BuildManager.main.worldBuildActive ? "Exit Build" : "Enter Build", onClick: () =>
-                {
-                    if (BuildManager.main.worldBuildActive)
-                        BuildManager.main.ExitBuild();
-                    else
-                        BuildManager.main.EnterBuild();
-
-                    NewGUI();
-                }
-            ));
-
-            if (BuildManager.main.worldBuildActive)
-                elements.Add(
-                    "placePart",
-                    Builder.CreateButton(main, 352, 48, text: "Place Part", onClick: () =>
-                    {
-                        BuildManager.main.TryBuildPart();
-                    }
-                ));
+            elements.Add("placePart", Builder.CreateButton(main, 352, 48, text: "Place Part", onClick: () =>
+            {
+                if (!BuildManager.main.worldBuildActive) return;
+                BuildManager.main.TryBuildPart();
+            }));
 
             elements.Add("oxygenLeftApprox", Builder.CreateLabel(main, 352, 32, text: "Oxygen left: 0m 0s"));
             #endregion

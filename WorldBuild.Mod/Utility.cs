@@ -69,7 +69,7 @@ namespace WorldBuild.Mod
 
         public static Vector2Int ToCenterAnchor(Vector2Int topLeftCoords)
         {
-            return topLeftCoords + new Vector2Int((int)GetCanvasSize().x, (int)GetCanvasSize().y) / 2;
+            return topLeftCoords - new Vector2Int((int)GetCanvasSize().x, (int)-GetCanvasSize().y) / 2;
         }
         
         private static RectTransform canvas;

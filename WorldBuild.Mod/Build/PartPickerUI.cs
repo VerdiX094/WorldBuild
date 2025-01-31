@@ -78,14 +78,19 @@ namespace WorldBuild.Mod.Build
             {
                 Object.Destroy(window_categories.gameObject);
             }
+            
+            var pos = Utility.ToCenterAnchor(new Vector2Int(80 + size_parts.x / 2 + size_categories.x / 2 + 8, -72));
+            
             window_categories = UIToolsBuilder.CreateClosableWindow
             (
                 GUIHolder,
                 id_categories,
                 size_categories.x,
                 size_categories.y,
+                pos.x,
+                pos.y,
                 savePosition: true,
-                draggable: true,
+                draggable: false,
                 opacity: 0.95f,
                 titleText: "Categories"
             );
@@ -100,7 +105,7 @@ namespace WorldBuild.Mod.Build
                 (
                     window_categories,
                     size_categories.x - 15,
-                    size_categories.y / 20,
+                    45,
                     onClick: () =>
                     {
                         if (selectedCategory != category)
@@ -129,15 +134,21 @@ namespace WorldBuild.Mod.Build
             {
                 Object.Destroy(window_parts.gameObject);
             }
+            
+            var pos = Utility.ToCenterAnchor(new Vector2Int(80, -72));
+            
             window_parts = Builder.CreateWindow
             (
                 GUIHolder,
                 id_parts,
                 size_parts.x,
                 size_parts.y,
-                draggable: true,
-                savePosition: false,
-                opacity: 0.95f
+                pos.x,
+                pos.y,
+                false,
+                true,
+                0.95f,
+                "Parts"
             );
             window_parts.CreateLayoutGroup(Type.Vertical, TextAnchor.UpperCenter, 10f, new RectOffset(5, 5, 5, 5));
             window_parts.EnableScrolling(Type.Vertical);
@@ -154,9 +165,9 @@ namespace WorldBuild.Mod.Build
                         createdParts.Add(variant, part);
                     }
                     Button button = CreatePartIcon(window_parts, part);
-                    button.onHold += (OnInputStayData data) =>
+                    button.onHold += data =>
                     {
-                        if (data.inputType == InputType.MouseLeft && !BuildManager.main.draggingPart)
+                        if (data.inputType == InputType.MouseLeft)
                             BuildManager.main.CreateNewPart(variant, data.position.World(0f));
                     };
                     button.onClick += () => Debugger.Log("TODO: Part info box.");
@@ -179,7 +190,7 @@ namespace WorldBuild.Mod.Build
         }
 
         // ? Derived from `SFS.Builds.PickGridUI.Initialize`.
-        static CategoryParts[] GetPickCategories()
+        private static CategoryParts[] GetPickCategories()
         {
             Dictionary<PickCategory, CategoryParts> dictionary = new Dictionary<PickCategory, CategoryParts>();
             foreach (VariantRef value in Base.partsLoader.partVariants.Values)
@@ -204,7 +215,7 @@ namespace WorldBuild.Mod.Build
                     dictionary[pickTag.tag].parts.Add((item, value));
                 }
             }
-            dictionary = dictionary.Where((KeyValuePair<PickCategory, CategoryParts> pair) => pair.Value.parts.Any(((bool owned, VariantRef part) a) => a.owned)).ToDictionary((KeyValuePair<PickCategory, CategoryParts> pair) => pair.Key, (KeyValuePair<PickCategory, CategoryParts> pair) => pair.Value);
+            dictionary = dictionary.Where(pair => pair.Value.parts.Any(a => a.owned)).ToDictionary(pair => pair.Key, pair => pair.Value);
             foreach (PickCategory category in dictionary.Keys)
             {
                 dictionary[category].parts = dictionary[category].parts.OrderBy(((bool owned, VariantRef part) variant) => -variant.part.GetPriority(category)).ToList();

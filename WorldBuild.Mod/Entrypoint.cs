@@ -35,12 +35,12 @@ namespace WorldBuild.Mod
             new Harmony("no.i.chuj").PatchAll();
             ManagerInjector.Inject();
 
-            Main.main = new Main();
+            BuildMain.buildMain = new BuildMain();
         }
 
         public override void Load()
         {
-            Main.main.Load();
+            BuildMain.buildMain.Load();
         }
     }
 }

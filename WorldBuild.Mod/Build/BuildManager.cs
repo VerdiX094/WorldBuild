@@ -212,7 +212,7 @@ namespace WorldBuild.Mod.Build
                 MsgDrawer.main.Log("Cannot build part inside another part!");
                 return;
             }
-            else if (PartPlacementState == PartPlacementState.ClippingTerrain)
+            if (PartPlacementState == PartPlacementState.ClippingTerrain)
             {
                 MsgDrawer.main.Log("Cannot build part inside the ground!");
                 return;
@@ -251,6 +251,7 @@ namespace WorldBuild.Mod.Build
                 false
             );
             rocket.stats.Load(-1);
+            //TODO rocket.GetRotation()
             rocket.SetJointGroup(group);
             heldPart.transform.localPosition = Vector3.zero;
 
