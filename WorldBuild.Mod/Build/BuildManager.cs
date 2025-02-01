@@ -20,7 +20,7 @@ namespace WorldBuild.Mod.Build
         public bool worldBuildActive;
         public bool draggingPart;
 
-        Part heldPart;
+        public Part heldPart;
         Rocket closestRocket;
         Vector2 partTargetPos;
         List<Collider2D> disabledColliders = new List<Collider2D>();
