@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
@@ -14,6 +15,10 @@ using static SFS.Builds.PickGridUI;
 using ModButton = SFS.UI.ModGUI.Button;
 using SFS.Input;
 using WorldBuild.Mod;
+using static SFS.Parts.Modules.AdvancedCut;
+
+using Object = UnityEngine.Object;
+using Type = SFS.UI.ModGUI.Type;
 
 namespace WorldBuild.Mod.Build
 {
@@ -76,31 +81,7 @@ namespace WorldBuild.Mod.Build
 
         static void CreateCategoriesUI()
         {
-            if (window_categories != null)
-            {
-                Object.Destroy(window_categories.gameObject);
-            }
-            
-            var pos = Utility.ToCenterAnchor(new Vector2Int(80 + size_parts.x / 2 + size_categories.x / 2 + 8, -72), Utility.PositionAnchor.TopLeft);
-            
-            window_categories = UIToolsBuilder.CreateClosableWindow
-            (
-                GUIHolder,
-                id_categories,
-                size_categories.x,
-                size_categories.y,
-                pos.x,
-                pos.y,
-                savePosition: true,
-                draggable: false,
-                opacity: 0.95f,
-                titleText: "Categories"
-            );
-            window_categories.CreateLayoutGroup(Type.Vertical, TextAnchor.UpperCenter, 10f, new RectOffset(5, 5, 5, 5));
-            window_categories.EnableScrolling(Type.Vertical);
-
-
-            foreach (CategoryParts category in pickCategories)
+            void CreateCategory(CategoryParts category)
             {
                 ModButton button = null;
                 button = Builder.CreateButton
@@ -126,7 +107,67 @@ namespace WorldBuild.Mod.Build
                     button_selectedCategory = button;
                     button_selectedCategory.SetSelected(true);
                 }
+            }
 
+            if (window_categories != null)
+            {
+                Object.Destroy(window_categories.gameObject);
+            }
+            
+            var pos = Utility.ToCenterAnchor(new Vector2Int(80 + size_parts.x / 2 + size_categories.x / 2 + 8, -72), Utility.PositionAnchor.TopLeft);
+            
+            window_categories = UIToolsBuilder.CreateClosableWindow
+            (
+                GUIHolder,
+                id_categories,
+                size_categories.x,
+                size_categories.y,
+                pos.x,
+                pos.y,
+                savePosition: true,
+                draggable: false,
+                opacity: 0.95f,
+                titleText: "Categories"
+            );
+            window_categories.CreateLayoutGroup(Type.Vertical, TextAnchor.UpperCenter, 10f, new RectOffset(5, 5, 5, 5));
+            window_categories.EnableScrolling(Type.Vertical);
+
+            string[] vanillaCats = new string[]
+            {
+                "Basics",
+                "6 Wide",
+                "8 Wide", 
+                "10 Wide",
+                "12 Wide",
+                "Engines",
+                "Aerodynamics",
+                "Fairings",
+                "Structural",
+                "Other",
+                "Redstone Atlas"
+            };
+
+            if (pickCategories.Any(cat => !vanillaCats.Contains(cat.tag.displayName.Field))) 
+            {
+                Builder.CreateLabel(window_categories, size_categories.x - 15, 45, text: "Vanilla");
+            }
+
+            foreach (CategoryParts category in pickCategories
+                .Where(cat => vanillaCats.Contains(cat.tag.displayName.Field)).ToList()
+                .KeySort(cat => Array.IndexOf(vanillaCats, cat.tag.displayName.Field), false)
+                )
+            {
+                CreateCategory(category);
+            }
+
+            if (pickCategories.Any(cat => !vanillaCats.Contains(cat.tag.displayName.Field)))
+            {
+                Builder.CreateLabel(window_categories, size_categories.x - 15, 45, text: "Modded");
+            }
+
+            foreach (CategoryParts cat in pickCategories.Where(cat => !vanillaCats.Contains(cat.tag.displayName.Field)))
+            {
+                CreateCategory(cat);
             }
         }
 

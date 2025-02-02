@@ -251,6 +251,7 @@ namespace WorldBuild.Mod.Build
                 false
             );
             rocket.stats.Load(-1);
+            rocket.rb2d.SetRotation(heldPart.transform.rotation);
             //TODO rocket.GetRotation()
             rocket.SetJointGroup(group);
             heldPart.transform.localPosition = Vector3.zero;

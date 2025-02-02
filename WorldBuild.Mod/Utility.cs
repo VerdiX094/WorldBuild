@@ -1,8 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using SFS.Analytics;
 using SFS.UI.ModGUI;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -84,22 +86,22 @@ namespace WorldBuild.Mod
         {
             return coords + new Vector2Int(
                 (
-                    EqualsAny(anchor, PositionAnchor.TopLeft, PositionAnchor.MiddleLeft, PositionAnchor.BottomLeft) ? -1 
+                    anchor.EqualsAny(PositionAnchor.TopLeft, PositionAnchor.MiddleLeft, PositionAnchor.BottomLeft) ? -1 
                     : (
-                        EqualsAny(anchor, PositionAnchor.TopRight, PositionAnchor.MiddleRight, PositionAnchor.BottomRight) ? 1 : 0
+                        anchor.EqualsAny(PositionAnchor.TopRight, PositionAnchor.MiddleRight, PositionAnchor.BottomRight) ? -1 : 0
                     )
                 ) * (int)GetCanvasSize().x, 
                 (
-                    EqualsAny(anchor, PositionAnchor.TopLeft, PositionAnchor.TopCenter, PositionAnchor.TopRight) ? -1
+                    anchor.EqualsAny(PositionAnchor.TopLeft, PositionAnchor.TopCenter, PositionAnchor.TopRight) ? 1
                     : (
-                        EqualsAny(anchor, PositionAnchor.BottomLeft, PositionAnchor.BottomCenter, PositionAnchor.BottomRight) ? 1 : 0
+                        anchor.EqualsAny(PositionAnchor.BottomLeft, PositionAnchor.BottomCenter, PositionAnchor.BottomRight) ? -1 : 0
                     )
-                ) *(int)GetCanvasSize().y) / 2;
+                ) * (int)GetCanvasSize().y) / 2;
         }
 
-        public static bool EqualsAny<T>(T a, params T[] b)
+        public static bool EqualsAny(this PositionAnchor a, params PositionAnchor[] b)
         {
-            return b.Contains(a);
+            return b.Any(e => e == a);
         }
         
         private static RectTransform canvas;
@@ -114,7 +116,35 @@ namespace WorldBuild.Mod
         {
             GameObject temp = Builder.CreateHolder(Builder.SceneToAttach.BaseScene, "TEMP");
             var result = temp.transform.parent as RectTransform;
-            Object.Destroy(temp);
+            UnityEngine.Object.Destroy(temp);
+            return result;
+        }
+
+        public static List<T> KeySort<T>(this List<T> source, Func<T, double> key, bool desc = false)
+        {
+            var result = new List<T>();
+
+            var temp = new List<T>(source);
+
+            while (result.Count < source.Count())
+            {
+                double bestKey = desc ? double.NegativeInfinity : double.PositiveInfinity;
+                T bestValue = default;
+
+                foreach (var item in temp)
+                {
+                    double curKey = key.Invoke(item);
+                    if ((desc && curKey >= bestKey) || (!desc && curKey <= bestKey))
+                    {
+                        bestKey = curKey;
+                        bestValue = item;
+                    } 
+                }
+
+                result.Add(bestValue);
+                temp.Remove(bestValue);
+            }
+
             return result;
         }
     }
