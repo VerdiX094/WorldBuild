@@ -352,6 +352,8 @@
     <Compile Include="UI\BuildButton.cs" />
     <Compile Include="UI\GUIBase.cs" />
     <Compile Include="UI\GUIManager.cs" />
+    <Compile Include="UI\PartControlsGUI.cs" />
+    <Compile Include="UI\WindowPositionHelper.cs" />
     <Compile Include="Utility.cs" />
     <Compile Include="Variables\Bindable.cs" />
     <Compile Include="Variables\Observable.cs" />

@@ -14,9 +14,8 @@ using Button = SFS.UI.Button;
 using static SFS.Builds.PickGridUI;
 using ModButton = SFS.UI.ModGUI.Button;
 using SFS.Input;
-using WorldBuild.Mod;
-using static SFS.Parts.Modules.AdvancedCut;
 
+using WorldBuild.Mod.UI;
 using Object = UnityEngine.Object;
 using Type = SFS.UI.ModGUI.Type;
 
@@ -114,7 +113,7 @@ namespace WorldBuild.Mod.Build
                 Object.Destroy(window_categories.gameObject);
             }
             
-            var pos = Utility.ToCenterAnchor(new Vector2Int(80 + size_parts.x / 2 + size_categories.x / 2 + 8, -72), Utility.PositionAnchor.TopLeft);
+            var pos = Utility.ToCenterAnchor(new Vector2Int(80 + size_parts.x / 2 + size_categories.x / 2 + 8, -72), Anchor.TopLeft);
             
             window_categories = UIToolsBuilder.CreateClosableWindow
             (
@@ -178,7 +177,7 @@ namespace WorldBuild.Mod.Build
                 Object.Destroy(window_parts.gameObject);
             }
             
-            var pos = Utility.ToCenterAnchor(new Vector2Int(80, -72), Utility.PositionAnchor.TopLeft);
+            var pos = Utility.ToCenterAnchor(new Vector2Int(80, -72), Anchor.TopLeft);
             
             window_parts = Builder.CreateWindow
             (
@@ -217,25 +216,6 @@ namespace WorldBuild.Mod.Build
                     button.onRightClick += () => Debugger.Log("TODO: Part info box.");
                 }
             }
-        }
-
-        static void CreateTooltip()
-        {
-            if (window_tooltip != null)
-            {
-                Object.DestroyImmediate(window_tooltip.gameObject);
-            }
-
-            if (!BuildManager.main.worldBuildActive) 
-                return;
-
-            var pos = Utility.ToCenterAnchor(new Vector2Int(-196, -136), Utility.PositionAnchor.BottomRight);
-            window_tooltip = Builder.CreateWindow(GUIHolder, id_tooltip, 360, 240, pos.x, pos.y, opacity: 0.95f, titleText: "Part Info");
-            window_tooltip.CreateLayoutGroup(Type.Vertical);
-
-            Label l = Builder.CreateLabel(window_tooltip, 320, 180);
-
-            l.Text = $"Name: {BuildManager.main.heldPart.Name}\nCost: 2137 Ore";
         }
 
         public static void DestroyUI()
