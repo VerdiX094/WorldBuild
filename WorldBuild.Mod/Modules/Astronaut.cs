@@ -52,7 +52,7 @@ namespace WorldBuild.Mod.Modules
             // I assume that earth's 0.005 atmo density = 1 atm, the atmo breathing limits are 0.5-2 atm
             if (atmoDensity > 0.0025 && atmoDensity < 0.01 && planet.data.atmosphereVisuals.GRADIENT.texture == "Atmo_Earth")
             {
-                startTime += WorldTime.main.timewarpSpeed * Time.deltaTime;
+                startTime += WorldTime.main.realtimePhysics ? Time.deltaTime : (WorldTime.main.timewarpSpeed * Time.deltaTime);
             }
 
             AstronautDataHelper.main.SaveData.position = loc.position;

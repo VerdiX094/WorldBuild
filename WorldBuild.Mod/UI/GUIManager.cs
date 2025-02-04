@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -19,7 +20,13 @@ namespace WorldBuild.Mod.UI
             {
                 if (!type.IsSubclassOf(typeof(GUIBase))) continue;
 
-                bases.Add(Activator.CreateInstance(type) as GUIBase);
+                try
+                {
+                    bases.Add(Activator.CreateInstance(type) as GUIBase);
+                } catch
+                {
+                    Debugger.Log("Failed to initialize a UI!", true);
+                }
             }
 
             SceneManager.sceneLoaded += (Scene scene, LoadSceneMode mode) =>
@@ -35,7 +42,21 @@ namespace WorldBuild.Mod.UI
 
         void Update()
         {
-            bases.ForEach(Base => { if (Utility.CheckSceneLoaded(Base.SceneToAttach)) Base.OnFrame(); });
+            bases.ForEach(Base => {
+                if (Utility.CheckSceneLoaded(Base.SceneToAttach))
+                    try
+                    {
+                        Base.OnFrame();
+                    } catch
+                    {
+                        Debugger.Log($"UI {Base.GetType().Name} errored!", true);
+                    }
+                });
+        }
+
+        public T GetUI<T>() where T : GUIBase
+        {
+            return bases.First(b => b is T) as T;
         }
     }
 }

@@ -18,6 +18,7 @@ using SFS.Input;
 using WorldBuild.Mod.UI;
 using Object = UnityEngine.Object;
 using Type = SFS.UI.ModGUI.Type;
+using SFS.World;
 
 namespace WorldBuild.Mod.Build
 {
@@ -113,8 +114,8 @@ namespace WorldBuild.Mod.Build
                 Object.Destroy(window_categories.gameObject);
             }
             
-            var pos = Utility.ToCenterAnchor(new Vector2Int(80 + size_parts.x / 2 + size_categories.x / 2 + 8, -72), Anchor.TopLeft);
-            
+            var pos = WindowPositionHelper.GenerateWindowCoords(32 + size_parts.x, -80, size_categories.x, size_categories.y, Anchor.TopLeft, Origin.TopLeft);
+
             window_categories = UIToolsBuilder.CreateClosableWindow
             (
                 GUIHolder,
@@ -177,7 +178,7 @@ namespace WorldBuild.Mod.Build
                 Object.Destroy(window_parts.gameObject);
             }
             
-            var pos = Utility.ToCenterAnchor(new Vector2Int(80, -72), Anchor.TopLeft);
+            var pos = WindowPositionHelper.GenerateWindowCoords(16, -80, size_parts.x, size_parts.y, Anchor.TopLeft, Origin.TopLeft);
             
             window_parts = Builder.CreateWindow
             (

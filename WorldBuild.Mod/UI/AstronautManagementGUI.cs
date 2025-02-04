@@ -41,15 +41,13 @@ namespace WorldBuild.Mod.UI
 
         public override void GenerateGUI() 
         {
-            window = Builder.CreateWindow(holder.transform, WindowID, 448, 280 + (BuildManager.main.worldBuildActive ? 56 : 0), 300, 300, true, true, 0.95f, "Astronaut");
-            HorizontalDefGroup();
+            var coords = WindowPositionHelper.GenerateWindowCoords(0, 16, 384, 224, Anchor.BottomCenter, Origin.BottomCenter);
+
+            window = Builder.CreateWindow(holder.transform, WindowID, 384, 224, coords.x, coords.y, false, false, 0.95f, "Astronaut");
+            VerticalDefGroup();
 
             elements.Add("main", Builder.CreateContainer(window));
             (elements["main"] as Container).CreateLayoutGroup(SFS.UI.ModGUI.Type.Vertical, childAlignment: TextAnchor.UpperCenter, spacing: 8, padding: new RectOffset(0, 0, 8, 0));
-
-            elements.Add("keybindsHints", Builder.CreateContainer(window));
-            (elements["keybindsHints"] as Container).CreateLayoutGroup(SFS.UI.ModGUI.Type.Vertical, childAlignment: TextAnchor.UpperCenter, spacing: 8, padding: new RectOffset(0, 0, 8, 0));
-
             #region Main
             var main = elements["main"] as Container;
 
@@ -88,34 +86,7 @@ namespace WorldBuild.Mod.UI
                 }
             ));
 
-            elements.Add("placePart", Builder.CreateButton(main, 352, 48, text: "Place Part", onClick: () =>
-            {
-                if (!BuildManager.main.worldBuildActive) return;
-                BuildManager.main.TryBuildPart();
-            }));
-
             elements.Add("oxygenLeftApprox", Builder.CreateLabel(main, 352, 32, text: "Oxygen left: 0m 0s"));
-            #endregion
-            #region Keybind Hints
-
-            var kh = elements["keybindsHints"] as Container;
-
-            elements.Add("plantFlagKB",
-                Builder.CreateLabel(kh, 56, 48, text: "F")
-            );
-
-            elements.Add("endEVAKB",
-                Builder.CreateLabel(kh, 56, 48, text: "Del")
-            );
-
-            elements.Add("switchBuildKB",
-                Builder.CreateLabel(kh, 56, 48, text: "B")
-            );
-
-            elements.Add("placePartKB",
-                Builder.CreateLabel(kh, 56, 48, text: "P")
-            );
-
             #endregion
         }
     }

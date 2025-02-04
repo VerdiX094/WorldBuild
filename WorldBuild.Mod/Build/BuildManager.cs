@@ -20,11 +20,13 @@ namespace WorldBuild.Mod.Build
         public bool worldBuildActive;
         public bool draggingPart;
 
-        public Part heldPart;
+        public Part heldPart { get; set; }
         Rocket closestRocket;
         Vector2 partTargetPos;
         List<Collider2D> disabledColliders = new List<Collider2D>();
         Dictionary<Mesh, List<Color32>> defaultMeshColors = new Dictionary<Mesh, List<Color32>>();
+
+        float rotOffset = 0;
 
         Color originalPartColor;
 
@@ -46,7 +48,9 @@ namespace WorldBuild.Mod.Build
         {
             if (heldPart == null)
                 return;
-            
+
+            rotOffset = heldPart.orientation.orientation.Value.z;
+
             // * Update closest rocket and create rocket build colliders.
             // TODO: Optimise part clipping detection? (currently the code just rebuilds part/rocket colliders every time the part is transformed).
             float bestDist = 0f;
@@ -65,7 +69,7 @@ namespace WorldBuild.Mod.Build
                         bestDist = dist;
                         bestIdx = idx;
                     }
-                    if (dist <= 10f && !Base.worldBase.settings.cheats.partClipping)
+                    if (dist <= 15f && !Base.worldBase.settings.cheats.partClipping)
                     {
                         rocketColliders.Add(rocket, CreateBuildColliders(rocket.partHolder.GetArray()));
                     }
@@ -73,9 +77,11 @@ namespace WorldBuild.Mod.Build
             }
             closestRocket = bestIdx is int i ? GameManager.main.rockets[i] : null;
 
+
+
             // * Update part rotation.
             float angle = closestRocket?.rb2d.rotation ?? ((float) WorldView.ToGlobalPosition(heldPart.transform.position).AngleDegrees - 90f);
-            heldPart.transform.rotation = Quaternion.Euler(0, 0, angle);
+            heldPart.transform.rotation = Quaternion.Euler(0, 0, angle + rotOffset);
 
             // * Update part position.
             Vector2 pos = partTargetPos;
@@ -196,7 +202,7 @@ namespace WorldBuild.Mod.Build
             }
         }
 
-        void DestroyHeldPart()
+        public void DestroyHeldPart()
         {
             disabledColliders.Clear();
             try { heldPart.DestroyPart(false, false, DestructionReason.Intentional); } catch (NullReferenceException) { }
@@ -245,7 +251,7 @@ namespace WorldBuild.Mod.Build
                 (
                     WorldTime.main.worldTime,
                     WorldView.main.ViewLocation.planet,
-                    WorldView.ToGlobalPosition((Vector2)heldPart.transform.position + heldPart.centerOfMass.Value),
+                    WorldView.ToGlobalPosition((Vector2)heldPart.transform.TransformPoint(heldPart.centerOfMass.Value)),
                     PlayerController.main.player.Value.location.velocity
                 ),
                 false
@@ -299,6 +305,20 @@ namespace WorldBuild.Mod.Build
             input.onInputEnd += OnInputEnd;
             input.onDrag += OnDrag;
             ActiveCamera.Camera.position.OnChange += OnCameraPositionChange;
+
+            PlayerController.main.player.OnChange += PlayerShit;
+
+            void PlayerShit(Player playerOvrd = null)
+            {
+
+
+                var pl = playerOvrd ?? PlayerController.main.player.Value;
+
+                pl.location.position.OnChange += () =>
+                {
+
+                };
+            }
 
             void OnInputStart(OnInputStartData data)
             {
