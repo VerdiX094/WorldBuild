@@ -18,7 +18,7 @@ namespace WorldBuild.Mod.Managers
             "<size=70>VerdiX094/N2O4</size>",
             "<size=55>Lead programmer</size>",
             "",
-            "<size=70>Astro The Rabbit/pixelgaming579</size>",
+            "<size=70>Astro The Rabbit</size>",
             "<size=55>Programmer</size>",
             "",
             "<size=70>Cratior</size>",
