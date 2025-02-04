@@ -296,7 +296,7 @@
       <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Spaceflight Simulator\Spaceflight Simulator Game\Spaceflight Simulator_Data\Managed\UnityEngine.XRModule.dll</HintPath>
     </Reference>
     <Reference Include="WorldBuild.Toolkit">
-      <HintPath>..\WorldBuild.Toolkit\bin\Debug\WorldBuild.Toolkit.dll</HintPath>
+      <HintPath>..\..\..\..\Downloads\WorldBuild.Toolkit.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -323,6 +323,7 @@
     <Compile Include="Modules\RocketOxygen.cs" />
     <Compile Include="Build\Patches.cs" />
     <Compile Include="PartPriceCalculator.cs" />
+    <Compile Include="Patches\FuelBarColorPatch.cs" />
     <Compile Include="Patches\DevSettingsPatch.cs" />
     <Compile Include="Patches\OnLaunchPatch.cs" />
     <Compile Include="Patches\SavingPatch.cs" />
@@ -355,6 +356,9 @@
       <LastGenOutput>ResourceFile.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Assets\Liquid_fuel.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
