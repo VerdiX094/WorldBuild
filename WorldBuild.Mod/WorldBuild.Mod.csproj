@@ -302,7 +302,6 @@
   <ItemGroup>
     <Compile Include="Debugger.cs" />
     <Compile Include="Build\PartPickerUI.cs" />
-    <Compile Include="Build\BuildMain.cs" />
     <Compile Include="Build\BuildManager.cs" />
     <Compile Include="Managers\AstronautSpawner.cs" />
     <Compile Include="Managers\WorldManager.cs" />
@@ -326,8 +325,8 @@
     <Compile Include="Patches\DevSettingsPatch.cs" />
     <Compile Include="Patches\OnLaunchPatch.cs" />
     <Compile Include="Patches\SavingPatch.cs" />
+    <Compile Include="Patches\TimewarpPatch.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Build\Settings.cs" />
     <Compile Include="ResourceFile.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>

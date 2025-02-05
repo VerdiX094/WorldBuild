@@ -11,12 +11,14 @@ using SFS.Parts;
 using SFS.Cameras;
 using SFS.Parts.Modules;
 using static SFS.Builds.BuildGrid;
+using WorldBuild.Mod.Managers;
+using WorldBuild.Mod.UI;
+using System.Collections;
 
 namespace WorldBuild.Mod.Build
 {
-    public class BuildManager : MonoBehaviour
+    public class BuildManager : WorldManager<BuildManager>
     {
-        public static BuildManager main;
         public bool worldBuildActive;
         public bool draggingPart;
 
@@ -31,6 +33,7 @@ namespace WorldBuild.Mod.Build
         Color originalPartColor;
 
         PartPlacementState _partState;
+
         PartPlacementState PartPlacementState
         {
             get
@@ -42,6 +45,20 @@ namespace WorldBuild.Mod.Build
                 _partState = value;
                 SetPartColor(_partState == PartPlacementState.Allowed ? new Color(0, 1, 0, 0.5f) : new Color(1, 0, 0, 0.5f));
             }
+        }
+
+        IEnumerator InitialDragCoro()
+        {
+            while (Input.GetMouseButton(0))
+            {
+                partTargetPos = new TouchPosition(Input.mousePosition).World(0f) - heldPart.centerOfMass.Value;
+                yield return null;
+            }
+        }
+
+        void Start()
+        {
+            AddInputs();
         }
 
         void Update()
@@ -200,6 +217,10 @@ namespace WorldBuild.Mod.Build
                     }
                 }
             }
+
+            StartCoroutine(nameof(InitialDragCoro));
+
+            GUIManager.main.GetUI<PartControlsGUI>().NewGUI();
         }
 
         public void DestroyHeldPart()

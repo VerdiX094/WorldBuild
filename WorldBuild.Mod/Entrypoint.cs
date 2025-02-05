@@ -5,6 +5,10 @@ using ModLoader.Helpers;
 using System.Collections.Generic;
 using UnityEngine.SceneManagement;
 using WorldBuild.Mod.Build;
+using SFS.UI;
+using SFS.Variables;
+using SFS.Parts.Modules;
+using SFS.Parts;
 
 namespace WorldBuild.Mod
 {
@@ -34,13 +38,6 @@ namespace WorldBuild.Mod
         {
             new Harmony("no.i.chuj").PatchAll();
             ManagerInjector.Inject();
-
-            BuildMain.buildMain = new BuildMain();
-        }
-
-        public override void Load()
-        {
-            BuildMain.buildMain.Load();
         }
     }
 }

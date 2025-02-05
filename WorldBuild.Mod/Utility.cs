@@ -11,6 +11,10 @@ using UnityEngine.SceneManagement;
 using WorldBuild.Toolkit;
 using Type = System.Type;
 using WorldBuild.Mod.UI;
+using SFS.Parts;
+using SFS.Parts.Modules;
+using SFS.Translations;
+using System.Security.AccessControl;
 
 namespace WorldBuild.Mod
 {
@@ -101,6 +105,27 @@ namespace WorldBuild.Mod
         public static T As<T>(this object obj) where T : class
         {
             return obj as T;
+        }
+
+        public static string GetStats(Part part)
+        {
+            var result = new StringBuilder();
+
+            foreach (ResourceModule rm in part.GetModules<ResourceModule>())
+            {
+                result.AppendLine(rm.resourceType.displayName.Field + ": " + rm.ResourceAmount.ToString(2, false) + " / " + rm.TotalResourceCapacity.ToString(2, false) + rm.resourceType.resourceUnit.Field);
+            }
+            foreach (EngineModule em in part.GetModules<EngineModule>())
+            {
+                result.AppendLine("Thrust: " + em.thrust.Value + "t");
+            }
+            if (part.GetModules<DetachModule>().Length != 0)
+            {
+                var dm = part.GetModules<DetachModule>()[0];
+                result.AppendLine("Sep. force: " + dm.separationForce.Value.magnitude * dm.forceMultiplier.Value + "kN");
+            }
+
+            return result.ToString();
         }
     }
 }

@@ -12,21 +12,23 @@ namespace WorldBuild.Mod.Modules
 {
     public class Astronaut : InjectEverywhereWith<Astronaut_EVA>
     {
-        private double startTime;
-        
-        public double oxygenSeconds = 300;
+        public double maxOxygen = 300;
 
         public float materialLeft = 0;
 
+        private double oxygenSeconds = double.NegativeInfinity;
+
+        private double lastTime;
+
         public double GetOxygenSecondsLeft()
         {
-            return oxygenSeconds - (WorldTime.main.worldTime - startTime);
+            if (oxygenSeconds == double.NegativeInfinity) oxygenSeconds = maxOxygen;
+            return oxygenSeconds;
         }
 
         private void Start()
         {
-            startTime = WorldTime.main.worldTime;
-            //StartCoroutine(nameof(TimeEstimateTextCoro));
+            lastTime = WorldTime.main.worldTime;
         }
 
         private void Update()
@@ -50,9 +52,9 @@ namespace WorldBuild.Mod.Modules
             double atmoDensity = planet.GetAtmosphericDensity(TargetComponent.location.Value.Height);
 
             // I assume that earth's 0.005 atmo density = 1 atm, the atmo breathing limits are 0.5-2 atm
-            if (atmoDensity > 0.0025 && atmoDensity < 0.01 && planet.data.atmosphereVisuals.GRADIENT.texture == "Atmo_Earth")
+            if (!(atmoDensity > 0.0025 && atmoDensity < 0.01 && planet.data.atmosphereVisuals.GRADIENT.texture == "Atmo_Earth"))
             {
-                startTime += WorldTime.main.realtimePhysics ? Time.deltaTime : (WorldTime.main.timewarpSpeed * Time.deltaTime);
+                oxygenSeconds -= (WorldTime.main.worldTime - lastTime);
             }
 
             AstronautDataHelper.main.SaveData.position = loc.position;
@@ -64,6 +66,8 @@ namespace WorldBuild.Mod.Modules
             AstronautDataHelper.main.SaveData.temperature = TargetComponent.resources.temperature.Value;
             AstronautDataHelper.main.SaveData.rotationSpeed = TargetComponent.rb2d.angularVelocity;
             AstronautDataHelper.main.SaveData.materialLeft = 0f; // TODO
+
+            lastTime = WorldTime.main.worldTime;
 
             //(AstronautManagementGUI.main.Elements["oxygenBarSlider"] as Slider).Value = (float) (GetOxygenSecondsLeft() / oxygenSeconds) * 100;
         }

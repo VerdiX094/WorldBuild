@@ -48,6 +48,7 @@ namespace WorldBuild.Mod.UI
 
         private void OnPlayerChange(Player oldP, Player newP)
         {
+            if (newP == null) return;
             NewGUI();
         }
 

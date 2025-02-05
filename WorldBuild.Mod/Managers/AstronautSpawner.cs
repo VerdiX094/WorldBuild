@@ -17,6 +17,8 @@ namespace WorldBuild.Mod.Managers
     {
         private Rocket lastRocket;
 
+        public Astronaut_EVA eva;
+
         public bool isRocket
         {
             get
@@ -35,8 +37,6 @@ namespace WorldBuild.Mod.Managers
 
         public void EndEVAAndReturnToRocket(bool death = false)
         {
-            if (!lastRocket || !(PlayerController.main.player.Value is Astronaut_EVA eva)) return;
-
             AstronautManager.DestroyEVA(eva, death);
 
             PlayerController.main.player.Value = lastRocket;
@@ -99,15 +99,17 @@ namespace WorldBuild.Mod.Managers
             Astronaut astronaut = eva.GetComponent<Astronaut>();
             AstronautManagementGUI.main.OnFrame(); // refresh gui so the elements can be added to dict
             
-            astronaut.oxygenSeconds = rocket.GetComponent<RocketOxygen>().RequestOxygen(astronaut.oxygenSeconds);
+            astronaut.maxOxygen = rocket.GetComponent<RocketOxygen>().RequestOxygen(astronaut.maxOxygen);
 
-            if (astronaut.oxygenSeconds == -1)
+            if (astronaut.maxOxygen == -1)
             {
                 AstronautManager.DestroyEVA(eva, false);
                 return;
             }
 
             PlayerController.main.SmoothChangePlayer(eva);
+
+            this.eva = eva;
         }
 
         public Astronaut_EVA StartAndGetEVA(Location loc, float rotation, float angVel = 0, bool ragdoll = false, double fuelPercent = 1, float temperature = 0f)
@@ -122,7 +124,7 @@ namespace WorldBuild.Mod.Managers
                 loc,
                 rotation, 0, false, 1, 0);
 
-            eva.gameObject.name = "RIP IAmWater";
+            eva.gameObject.name = "WorldBuild Astronaut";
 
             IEWInjector.ForceRefresh();
 

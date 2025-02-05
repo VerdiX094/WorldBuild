@@ -56,22 +56,13 @@ namespace WorldBuild.Mod.UI
             }, text: "Right");
 
 
-            elements["openEditor"] = Builder.CreateButton(window, width - 24, 45, onClick: () => GUIManager.main.GetUI<VariableEditorGUI>().OpenEditor(), text: "Edit valuesz");
+            elements["openEditor"] = Builder.CreateButton(window, width - 24, 45, onClick: () => GUIManager.main.GetUI<VariableEditorGUI>().OpenEditor(), text: "Edit values");
 
             elements["sep"] = Builder.CreateSeparator(window, width - 24);
 
             var part = BuildManager.main.heldPart;
 
-            elements["info"] = Builder.CreateLabel(window, width - 24, 0, text: $"Part Info:\nName: {part.displayName.Field.subs[0]}\nMass: {part.mass.Value}t\n\nStats:\n");
-
-            foreach (var varDraw in part.GetModules<VariablesDrawer>())
-            {
-                foreach (var variable in varDraw.elements.Where(elem => elem.floatDrawType == VariablesDrawer.FloatDrawType.Stat || elem.stringDrawType == VariablesDrawer.StringDrawType.Stat
-                ))
-                {
-                    elements["info"].As<Label>().Text += $"{variable.label}: {(variable.floatReference != null ? variable.floatReference.Value + variable.units : variable.stringReference.Value + variable.units)}\n";
-                }
-            }
+            elements["info"] = Builder.CreateLabel(window, width - 24, 0, text: $"--- Part Info ---\nName: {part.displayName.Field.subs[0]}\nMass: {part.mass.Value}t\n--- Stats ---\n{Utility.GetStats(part)}");
 
             elements["info"].As<Label>().AutoFontResize = false;
             elements["info"].As<Label>().FontSize = 32;

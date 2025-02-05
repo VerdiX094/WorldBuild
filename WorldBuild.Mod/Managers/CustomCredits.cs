@@ -7,7 +7,7 @@ namespace WorldBuild.Mod.Managers
     {
         public string[] lines =
         {
-            "\n\n<size=80>--- WorldBuild developers ---</size>",
+            "\n\n<size=90>--- WorldBuild developers ---</size>",
             "",
             "<size=70>Heroix</size>",
             "<size=55>Project manager/coordinator</size>",

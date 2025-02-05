@@ -208,7 +208,8 @@ namespace WorldBuild.Mod.Build
                         createdParts.Add(variant, part);
                     }
                     Button button = CreatePartIcon(window_parts, part);
-                    button.onHold += data =>
+                    
+                    button.onDown += data =>
                     {
                         if (data.inputType == InputType.MouseLeft)
                             BuildManager.main.CreateNewPart(variant, data.position.World(0f));
