@@ -79,15 +79,5 @@ namespace WorldBuild.Mod {
                 return ((byte[])(obj));
             }
         }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
-        /// </summary>
-        internal static byte[] Liquid_fuel_w {
-            get {
-                object obj = ResourceManager.GetObject("Liquid_fuel-w", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
     }
 }
