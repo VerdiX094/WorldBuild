@@ -8,11 +8,16 @@ using WorldBuild.Mod.Build;
 
 namespace WorldBuild.Mod.UI
 {
-    public class BuildButton : WorldManager<BuildButton>
+    public class VanillaAstronautGUI : WorldManager<VanillaAstronautGUI>
     {
         private GameObject helpBtn;
         private ButtonPC bpc;
         private Sprite buildIcon;
+
+        private GameObject topBar;
+
+        private GameObject originalRecover;
+        private GameObject astronautRecover;
 
         private void Start()
         {
@@ -40,12 +45,19 @@ namespace WorldBuild.Mod.UI
             buttonPC.onClick += BuildManager.main.ToggleBuild;
             
             bpc = buttonPC;
+
+            topBar = GameObject.Find("Top Center Stats");
+
+            //originalRecover = GameObject.Find("Recover Button");
+            astronautRecover = Instantiate(originalRecover);
         }
         
         private void Update()
         {
             helpBtn.SetActive(PlayerController.main.player.Value is Astronaut_EVA);
             bpc.SetSelected(BuildManager.main.worldBuildActive);
+
+            topBar.SetActive(!(PlayerController.main.player.Value is Astronaut_EVA));
         }
     }
 }

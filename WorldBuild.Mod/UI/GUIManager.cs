@@ -47,11 +47,26 @@ namespace WorldBuild.Mod.UI
                     try
                     {
                         Base.OnFrame();
-                    } catch
+                    } catch (Exception e)
                     {
-                        Debugger.Log($"UI {Base.GetType().Name} errored!", true);
+                        Debugger.Log($"UI {Base.GetType().Name} errored! Error: " + e, true);
                     }
                 });
+        }
+
+        void LateUpdate()
+        {
+            bases.ForEach(Base => {
+                if (Utility.CheckSceneLoaded(Base.SceneToAttach))
+                    try
+                    {
+                        Base.LateUpdate();
+                    }
+                    catch (Exception e)
+                    {
+                        Debugger.Log($"UI {Base.GetType().Name} errored! Error: " + e, true);
+                    }
+            });
         }
 
         public T GetUI<T>() where T : GUIBase

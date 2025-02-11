@@ -20,6 +20,8 @@ namespace WorldBuild.Mod.Modules
 
         private double lastTime;
 
+        public bool BreathingAir;
+
         public double GetOxygenSecondsLeft()
         {
             if (oxygenSeconds == double.NegativeInfinity) oxygenSeconds = maxOxygen;
@@ -51,10 +53,13 @@ namespace WorldBuild.Mod.Modules
 
             double atmoDensity = planet.GetAtmosphericDensity(TargetComponent.location.Value.Height);
 
+            BreathingAir = true;
+
             // I assume that earth's 0.005 atmo density = 1 atm, the atmo breathing limits are 0.5-2 atm
             if (!(atmoDensity > 0.0025 && atmoDensity < 0.01 && planet.data.atmosphereVisuals.GRADIENT.texture == "Atmo_Earth"))
             {
-                oxygenSeconds -= (WorldTime.main.worldTime - lastTime);
+                oxygenSeconds -= WorldTime.main.worldTime - lastTime;
+                BreathingAir = false;
             }
 
             AstronautDataHelper.main.SaveData.position = loc.position;

@@ -2,6 +2,7 @@
 using SFS;
 using SFS.IO;
 using SFS.Parsers.Json;
+using SFS.UI;
 using SFS.World;
 using WorldBuild.Mod.Managers;
 
@@ -36,6 +37,8 @@ namespace WorldBuild.Mod.Saving
         
         public void OnSave(FolderPath path)
         {
+            MsgDrawer.main.Log("Saving called");
+
             var saveText = JsonWrapper.ToJson(
                 AstronautDataHelper.main.SaveData,
                 false);
@@ -46,6 +49,8 @@ namespace WorldBuild.Mod.Saving
 
         public void OnLoad(FolderPath path)
         {
+            MsgDrawer.main.Log("OnLoad called");
+
             var saveFile = path.ExtendToFile(SaveFileName);
 
             if (!saveFile.FileExists()) return;
@@ -53,6 +58,8 @@ namespace WorldBuild.Mod.Saving
             AstronautDataHelper.main.SaveData =
                 JsonWrapper.FromJson<AstronautSaveData>(
                     saveFile.ReadText());
+
+            Debugger.Log(AstronautDataHelper.main.SaveData.position.y);
         }
     }
 }

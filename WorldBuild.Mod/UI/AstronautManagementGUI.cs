@@ -36,7 +36,7 @@ namespace WorldBuild.Mod.UI
 
             if (eva.GetComponent<Astronaut>() == null) return;
 
-            (Elements["oxygenLeftApprox"] as Label).Text = $"Oxygen left: {Utility.StringifyTime(eva.GetComponent<Astronaut>().GetOxygenSecondsLeft())}";
+            (Elements["oxygenLeftApprox"] as Label).Text = $"Oxygen left: {Utility.StringifyTime(eva.GetComponent<Astronaut>().GetOxygenSecondsLeft())} {(eva.GetComponent<Astronaut>().BreathingAir ? "(air)" : "")}";
         }
 
         public override void GenerateGUI() 

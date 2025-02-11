@@ -15,6 +15,7 @@ using SFS.Parts;
 using SFS.Parts.Modules;
 using SFS.Translations;
 using System.Security.AccessControl;
+using SFS.World;
 
 namespace WorldBuild.Mod
 {

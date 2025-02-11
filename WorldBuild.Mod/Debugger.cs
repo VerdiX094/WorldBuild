@@ -6,7 +6,7 @@ namespace WorldBuild.Mod
 {
     public static class Debugger
     {
-        private const bool IsDebugEnabled = true;
+        public const bool IsDebugEnabled = true;
 
         private static object FormatMessage(object msg)
         {

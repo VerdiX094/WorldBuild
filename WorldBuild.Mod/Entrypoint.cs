@@ -25,6 +25,8 @@ namespace WorldBuild.Mod
 
         public static Entrypoint main;
 
+        public static Harmony patcher;
+
         // fuck Early_Load
         // or maybe not
         public Entrypoint()
@@ -36,7 +38,8 @@ namespace WorldBuild.Mod
 
         public override void Early_Load()
         {
-            new Harmony("no.i.chuj").PatchAll();
+            patcher = new Harmony("no.i.chuj");
+            patcher.PatchAll();
             ManagerInjector.Inject();
         }
     }

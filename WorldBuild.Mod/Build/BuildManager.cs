@@ -14,6 +14,7 @@ using static SFS.Builds.BuildGrid;
 using WorldBuild.Mod.Managers;
 using WorldBuild.Mod.UI;
 using System.Collections;
+using System.Net.Sockets;
 
 namespace WorldBuild.Mod.Build
 {
@@ -23,6 +24,9 @@ namespace WorldBuild.Mod.Build
         public bool draggingPart;
 
         public Part heldPart { get; set; }
+
+        private List<PartCollider> heldPartColliders;
+
         Rocket closestRocket;
         Vector2 partTargetPos;
         List<Collider2D> disabledColliders = new List<Collider2D>();
@@ -34,6 +38,8 @@ namespace WorldBuild.Mod.Build
 
         PartPlacementState _partState;
 
+        Vector2 lastAstronautPosition;
+
         PartPlacementState PartPlacementState
         {
             get
@@ -43,7 +49,7 @@ namespace WorldBuild.Mod.Build
             set
             {
                 _partState = value;
-                SetPartColor(_partState == PartPlacementState.Allowed ? new Color(0, 1, 0, 0.5f) : new Color(1, 0, 0, 0.5f));
+                //SetPartColor(_partState == PartPlacementState.Allowed ? new Color(0, 1, 0, 0.5f) : new Color(1, 0, 0, 0.5f));
             }
         }
 
@@ -56,9 +62,63 @@ namespace WorldBuild.Mod.Build
             }
         }
 
+        Rocket GetBestRocket(Rocket[] rockets, float limiter = 6f)
+        {
+            float bestDist = limiter;
+            Rocket bestRocket = null;
+
+            var partPoints = new HashSet<Vector2>();
+
+            foreach (ConvexPolygon convex in heldPart.GetBuildColliderPolygons().Item1)
+            {
+                convex.points.ForEach(p => partPoints.Add(p));
+            }
+
+            foreach (Rocket rocket in rockets)
+            {
+                if (!rocket.physics.loader.Loaded) continue;
+
+                foreach (Part rocketPart in rocket.partHolder.partsSet)
+                {
+                    foreach (ConvexPolygon convex in rocketPart.GetBuildColliderPolygons().Item1)
+                    {
+                        foreach (Vector2 point in convex.points)
+                        {
+                            var tp = point; // seems like i shouldnt use transformpoint here
+                            foreach (Vector2 partPoint in partPoints)
+                            {
+                                float dist = (tp - partPoint).magnitude;
+                                if (dist <= bestDist)
+                                {
+                                    bestDist = dist;
+                                    bestRocket = rocket;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            return bestRocket;
+        }
+
         void Start()
         {
             AddInputs();
+        }
+
+        public void RefreshPartColliders()
+        {
+            heldPartColliders = CreateBuildColliders(heldPart);
+        }
+
+        void InitializeAstronautFollow()
+        {
+            lastAstronautPosition = PlayerController.main.player.Value.transform.position;
+        }
+
+        void FollowAstronaut()
+        {
+            partTargetPos += (Vector2)PlayerController.main.player.Value.transform.position - lastAstronautPosition;
         }
 
         void Update()
@@ -66,35 +126,11 @@ namespace WorldBuild.Mod.Build
             if (heldPart == null)
                 return;
 
+            FollowAstronaut();
+
             rotOffset = heldPart.orientation.orientation.Value.z;
 
-            // * Update closest rocket and create rocket build colliders.
-            // TODO: Optimise part clipping detection? (currently the code just rebuilds part/rocket colliders every time the part is transformed).
-            float bestDist = 0f;
-            int? bestIdx = null;
-            Dictionary<Rocket, List<PartCollider>> rocketColliders = new Dictionary<Rocket, List<PartCollider>>();
-            for (int idx = 0; idx < GameManager.main.rockets.Count; idx++)
-            {
-                Rocket rocket = GameManager.main.rockets[idx];
-                if (rocket.physics.PhysicsMode)
-                {
-                    float maxDist = 1.5f * rocket.GetSizeRadius();
-                    float currentDist = (partTargetPos - rocket.rb2d.position).magnitude;
-                    float dist = currentDist - maxDist;
-                    if (dist < bestDist)
-                    {
-                        bestDist = dist;
-                        bestIdx = idx;
-                    }
-                    if (dist <= 15f && !Base.worldBase.settings.cheats.partClipping)
-                    {
-                        rocketColliders.Add(rocket, CreateBuildColliders(rocket.partHolder.GetArray()));
-                    }
-                }
-            }
-            closestRocket = bestIdx is int i ? GameManager.main.rockets[i] : null;
-
-
+            closestRocket = GetBestRocket(GameManager.main.rockets.ToArray());
 
             // * Update part rotation.
             float angle = closestRocket?.rb2d.rotation ?? ((float) WorldView.ToGlobalPosition(heldPart.transform.position).AngleDegrees - 90f);
@@ -108,34 +144,6 @@ namespace WorldBuild.Mod.Build
                 pos = closestRocket.partHolder.transform.TransformPoint(localPos.Round(0.5f));
             }
             heldPart.transform.position = pos;
-
-            // * Update part placement validity.
-            foreach (ConvexPolygon partPoly in CreateBuildColliders(heldPart).SelectMany((PartCollider col) => col.colliders))
-            {
-                foreach (KeyValuePair<Rocket, List<PartCollider>> kvp in rocketColliders)
-                {
-                    foreach (ConvexPolygon rocketPoly in kvp.Value.SelectMany((PartCollider col) => col.colliders))
-                    {
-                        if (ConvexPolygon.Intersect(partPoly, rocketPoly, -0.08f))
-                        {
-                            PartPlacementState = PartPlacementState.ClippingRocket;
-                            return;
-                        }
-                    }
-                }
-
-                // ! TODO: Fix part/terrain clipping detection
-                // foreach (Vector2 point in partPoly.points)
-                // {
-                //     Double2 worldPos = WorldView.ToGlobalPosition(heldPart.transform.TransformPoint(point));
-                //     if (WorldView.main.ViewLocation.planet.IsInsideTerrain(worldPos, -15))
-                //     {
-                //         PartPlacementState = PartPlacementState.ClippingTerrain;
-                //         return;
-                //     }
-                // }
-            }
-            PartPlacementState = PartPlacementState.Allowed;
         }
 
         List<PartCollider> CreateBuildColliders(params Part[] parts)
@@ -218,6 +226,9 @@ namespace WorldBuild.Mod.Build
                 }
             }
 
+            InitializeAstronautFollow();
+            RefreshPartColliders();
+
             StartCoroutine(nameof(InitialDragCoro));
 
             GUIManager.main.GetUI<PartControlsGUI>().NewGUI();
@@ -234,14 +245,50 @@ namespace WorldBuild.Mod.Build
             if (heldPart == null)
                 return;
 
+            RefreshPartColliders();
+
+            var rocketColliders = new Dictionary<Rocket, List<PartCollider>>();
+            foreach (Rocket rkt in GameManager.main.rockets.Where(r => r.physics.loader.Loaded))
+            {
+                rocketColliders.Add(rkt, CreateBuildColliders(rkt.partHolder.GetArray()));
+            }
+
+            PartPlacementState = PartPlacementState.Allowed;
+
+            // * Update part placement validity.
+            foreach (ConvexPolygon partPoly in heldPartColliders.SelectMany((PartCollider col) => col.colliders))
+            {
+                foreach (KeyValuePair<Rocket, List<PartCollider>> kvp in rocketColliders)
+                {
+                    foreach (ConvexPolygon rocketPoly in kvp.Value.SelectMany((PartCollider col) => col.colliders))
+                    {
+                        if (ConvexPolygon.Intersect(partPoly, rocketPoly, -0.08f))
+                        {
+                            PartPlacementState = PartPlacementState.ClippingRocket;
+                        }
+                    }
+                }
+
+                // ! TODO: Fix part/terrain clipping detection
+                // foreach (Vector2 point in partPoly.points)
+                // {
+                //     Double2 worldPos = WorldView.ToGlobalPosition(heldPart.transform.TransformPoint(point));
+                //     if (WorldView.main.ViewLocation.planet.IsInsideTerrain(worldPos, -15))
+                //     {
+                //         PartPlacementState = PartPlacementState.ClippingTerrain;
+                //         return;
+                //     }
+                // }
+            }
+
             if (PartPlacementState == PartPlacementState.ClippingRocket)
             {
-                MsgDrawer.main.Log("Cannot build part inside another part!");
+                MsgDrawer.main.Log("Cannot build part inside another part! (enable the Part Clipping cheat for that)");
                 return;
             }
             if (PartPlacementState == PartPlacementState.ClippingTerrain)
             {
-                MsgDrawer.main.Log("Cannot build part inside the ground!");
+                MsgDrawer.main.Log("Cannot build part inside the ground! (enable the Part Clipping cheat for that)");
                 return;
             }
 
@@ -326,20 +373,6 @@ namespace WorldBuild.Mod.Build
             input.onInputEnd += OnInputEnd;
             input.onDrag += OnDrag;
             ActiveCamera.Camera.position.OnChange += OnCameraPositionChange;
-
-            PlayerController.main.player.OnChange += PlayerShit;
-
-            void PlayerShit(Player playerOvrd = null)
-            {
-
-
-                var pl = playerOvrd ?? PlayerController.main.player.Value;
-
-                pl.location.position.OnChange += () =>
-                {
-
-                };
-            }
 
             void OnInputStart(OnInputStartData data)
             {

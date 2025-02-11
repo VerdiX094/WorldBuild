@@ -26,6 +26,7 @@ namespace WorldBuild.Mod.UI
         public virtual void Begin() { }
         public virtual void GenerateGUI() { }
         public virtual void Update() { }
+        public virtual void LateUpdate() { }
 
         protected void VerticalDefGroup()
         {

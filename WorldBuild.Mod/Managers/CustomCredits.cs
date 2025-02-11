@@ -5,6 +5,8 @@ namespace WorldBuild.Mod.Managers
 {
     public class CustomCredits : BaseManager<CustomCredits>
     {
+        private Text text;
+
         public string[] lines =
         {
             "\n\n<size=90>--- WorldBuild developers ---</size>",
@@ -26,16 +28,13 @@ namespace WorldBuild.Mod.Managers
             "",
         };
 
+        private void Start()
+        {
+            text = GameObject.Find("Read Menu").GetComponentInChildren<Text>(true);
+        }
+
         public void Update()
         {
-            GameObject go = GameObject.Find("Read Menu");
-
-            if (!go) return;
-
-            Text text = go.GetComponentInChildren<Text>();
-
-            if (!text) return;
-
             if (text.text.Contains(lines[0]) || !text.text.Contains("Designer - Programmer - Artist")) return;
 
             text.text = string.Concat(text.text, string.Join("\n", lines));

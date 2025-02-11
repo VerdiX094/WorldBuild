@@ -7,8 +7,8 @@ namespace WorldBuild.Mod.Patches
     [HarmonyPatch(typeof(BuildManager), nameof(BuildManager.Launch))]
     public static class OnLaunchPatch
     {
-        [HarmonyPostfix]
-        public static void Postfix()
+        [HarmonyPrefix]
+        public static void Prefix()
         {
             AstronautSavingManager.main.astronautSwitchBlocked = true;
         }

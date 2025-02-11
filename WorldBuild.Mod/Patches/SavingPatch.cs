@@ -12,7 +12,10 @@ namespace WorldBuild.Mod.Patches
         [HarmonyPostfix]
         public static void Postfix(FolderPath path, bool saveRocketsAndBranches, WorldSave worldSave, bool isCareer)
         {
+            if (!saveRocketsAndBranches) return;
+
             AstronautSavingManager.main.OnSave(path);
+            AstronautDataHelper.main.SaveData = new AstronautSaveData();
         }
     }
     [HarmonyPatch(typeof(WorldSave), nameof(WorldSave.TryLoad))]

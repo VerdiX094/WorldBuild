@@ -339,7 +339,8 @@
     <Compile Include="UI\AstronautManagementGUI.cs" />
     <Compile Include="UI\AstronautSpawnGUI.cs" />
     <Compile Include="Managers\CapsuleScanner.cs" />
-    <Compile Include="UI\BuildButton.cs" />
+    <Compile Include="UI\PerformanceTestingGUI.cs" />
+    <Compile Include="UI\VanillaAstronautGUI.cs" />
     <Compile Include="UI\GUIBase.cs" />
     <Compile Include="UI\GUIManager.cs" />
     <Compile Include="UI\PartControlsGUI.cs" />

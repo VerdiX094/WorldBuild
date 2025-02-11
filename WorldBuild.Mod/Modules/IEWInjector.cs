@@ -6,15 +6,19 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using Cysharp.Threading.Tasks;
 using WorldBuild.Mod.Managers;
+using HarmonyLib;
 
 namespace WorldBuild.Mod.Modules
 {
     public class IEWInjector : BaseManager<IEWInjector>
     {
         private static List<Type> IEWTypes = new List<Type>();
-
+        static HarmonyMethod prefix;
+        static HarmonyMethod postfix;
         public void Start()
         {
+            prefix = new HarmonyMethod(typeof(DebugPatch).GetMethod(nameof(DebugPatch.Start)));
+            postfix = new HarmonyMethod(typeof(DebugPatch).GetMethod(nameof(DebugPatch.End)));
             foreach (Type type in Assembly.GetExecutingAssembly().GetTypes())
             {
                 if (type.BaseType.IsGenericType && type.BaseType.GetGenericTypeDefinition() == typeof(InjectEverywhereWith<>))
@@ -22,12 +26,6 @@ namespace WorldBuild.Mod.Modules
                     IEWTypes.Add(type);
                 }
             }
-
-            SceneManager.sceneLoaded += (Scene s, LoadSceneMode lsm) =>
-            {
-            };
-
-            StartCoroutine(nameof(InjectRoutine));
         }
 
         public static void ForceRefresh()
@@ -44,20 +42,22 @@ namespace WorldBuild.Mod.Modules
                             type.BaseType.GetGenericArguments()[0])
                         .ForEach(comp => {
                             if (comp.gameObject.GetComponent(type) == null)
+                            {
                                 comp.gameObject.AddComponent(type);
+
+                                var upd = type.GetMethod("Update", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.FlattenHierarchy);
+                                if (upd != null)
+                                    Entrypoint.patcher.Patch(upd, prefix, postfix);
+                            }
                         }
                     ));
                 }
             }
         }
-        IEnumerator InjectRoutine()
-        {
-            while (true)
-            {
-                ForceRefresh();
 
-                yield return new WaitForSecondsRealtime(0.1f);
-            }
+        void Update()
+        {
+            ForceRefresh();
         }
     }
 }
