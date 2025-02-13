@@ -81,7 +81,7 @@ namespace WorldBuild.Mod.UI
         {
             GameObject temp = Builder.CreateHolder(Builder.SceneToAttach.BaseScene, "TEMP");
             var result = temp.transform.parent as RectTransform;
-            UnityEngine.Object.Destroy(temp);
+            Object.Destroy(temp);
             return result;
         }
     }

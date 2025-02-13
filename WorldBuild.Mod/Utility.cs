@@ -59,7 +59,7 @@ namespace WorldBuild.Mod
 
         public static Component GetOrAddComponent(this Component component, Type type)
         {
-            return component.gameObject.GetComponent(type);
+            return component.gameObject.GetComponent(type) ?? component.gameObject.AddComponent(type);
         }
 
         public static string StringifyTime(double seconds)

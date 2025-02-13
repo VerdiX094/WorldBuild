@@ -46,11 +46,11 @@ namespace WorldBuild.Mod.Managers
 
         public void EndEVA(Rocket rocket)
         {
-            if (!(PlayerController.main.player.Value is Astronaut_EVA eva)) return;
+            if (!(PlayerController.main.player.Value is Astronaut_EVA curEva)) return;
 
             rocket.GetComponent<RocketOxygen>().ReturnOxygen(eva.GetComponent<Astronaut>().GetOxygenSecondsLeft());
 
-            AstronautManager.DestroyEVA(eva, false);
+            AstronautManager.DestroyEVA(curEva, false);
 
             PlayerController.main.SmoothChangePlayer(rocket);
             
@@ -126,13 +126,11 @@ namespace WorldBuild.Mod.Managers
 
             eva.gameObject.name = "WorldBuild Astronaut";
 
-            IEWInjector.ForceRefresh();
-
             AstronautDataHelper.main.SaveData.evaActive = true;
             
             return eva;
         }
 
-        private bool CheckWorld() => Utility.CheckSceneLoaded("World_PC");
+        //private bool CheckWorld() => Utility.CheckSceneLoaded("World_PC");
     }
 }

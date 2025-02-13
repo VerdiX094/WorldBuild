@@ -12,50 +12,47 @@ namespace WorldBuild.Mod.Modules
 {
     public class IEWInjector : BaseManager<IEWInjector>
     {
-        private static List<Type> IEWTypes = new List<Type>();
-        static HarmonyMethod prefix;
-        static HarmonyMethod postfix;
+        private static List<(Type, Type)> IEWTypes = new List<(Type, Type)>();
+
         public void Start()
         {
-            prefix = new HarmonyMethod(typeof(DebugPatch).GetMethod(nameof(DebugPatch.Start)));
-            postfix = new HarmonyMethod(typeof(DebugPatch).GetMethod(nameof(DebugPatch.End)));
             foreach (Type type in Assembly.GetExecutingAssembly().GetTypes())
             {
-                if (type.BaseType.IsGenericType && type.BaseType.GetGenericTypeDefinition() == typeof(InjectEverywhereWith<>))
+                var baseType = type.BaseType;
+                if (baseType == null) continue;
+                if (baseType.IsGenericType && baseType.GetGenericTypeDefinition() == typeof(InjectEverywhereWith<>))
                 {
-                    IEWTypes.Add(type);
+                    IEWTypes.Add((type, baseType.GetGenericArguments()[0]));
                 }
             }
         }
-
+        
         public static void ForceRefresh()
         {
-            foreach (Type type in IEWTypes)
+            for (int i = 0; i < SceneManager.sceneCount; i++)
             {
-                for (int i = 0; i < SceneManager.loadedSceneCount; i++)
+                Scene s = SceneManager.GetSceneAt(i);
+                if (!s.isLoaded) continue;
+
+                var roots = s.GetRootGameObjects();
+                
+                for (int ri = 0; ri < roots.Length; ri++)
                 {
-                    Scene s = SceneManager.GetSceneAt(i);
-
-                    s.GetRootGameObjects()
-                    .ForEach(obj =>
-                        obj.GetComponentsInChildren(
-                            type.BaseType.GetGenericArguments()[0])
-                        .ForEach(comp => {
-                            if (comp.gameObject.GetComponent(type) == null)
-                            {
-                                comp.gameObject.AddComponent(type);
-
-                                var upd = type.GetMethod("Update", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.FlattenHierarchy);
-                                if (upd != null)
-                                    Entrypoint.patcher.Patch(upd, prefix, postfix);
-                            }
+                    var root = roots[ri];
+                    for (int ti = 0; i < IEWTypes.Count; i++)
+                    {
+                        var type = IEWTypes[ti];
+                        var comps = root.GetComponentsInChildren(type.Item2);
+                        for (int ci = 0; ci < comps.Length; ci++)
+                        {
+                            comps[ci].GetOrAddComponent(type.Item1);
                         }
-                    ));
+                    }
                 }
             }
         }
 
-        void Update()
+        void LateUpdate()
         {
             ForceRefresh();
         }
