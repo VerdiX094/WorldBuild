@@ -132,7 +132,7 @@ namespace WorldBuild.Mod.Build
             window_categories.CreateLayoutGroup(Type.Vertical, TextAnchor.UpperCenter, 10f, new RectOffset(5, 5, 5, 5));
             window_categories.EnableScrolling(Type.Vertical);
 
-            string[] vanillaCats = new string[]
+            string[] vanillaCats =
             {
                 "Basics",
                 "6 Wide",
@@ -218,6 +218,7 @@ namespace WorldBuild.Mod.Build
                     button.onRightClick += () => Debugger.Log("TODO: Part info box.");
                 }
             }
+            DestroyCreatedParts();
         }
 
         public static void DestroyUI()

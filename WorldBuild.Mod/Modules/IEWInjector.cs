@@ -14,7 +14,7 @@ namespace WorldBuild.Mod.Modules
     {
         private static List<(Type, Type)> IEWTypes = new List<(Type, Type)>();
 
-        public void Start()
+        private void Start()
         {
             foreach (Type type in Assembly.GetExecutingAssembly().GetTypes())
             {
@@ -39,7 +39,7 @@ namespace WorldBuild.Mod.Modules
                 for (int ri = 0; ri < roots.Length; ri++)
                 {
                     var root = roots[ri];
-                    for (int ti = 0; i < IEWTypes.Count; i++)
+                    for (int ti = 0; ti < IEWTypes.Count; ti++)
                     {
                         var type = IEWTypes[ti];
                         var comps = root.GetComponentsInChildren(type.Item2);
@@ -52,7 +52,7 @@ namespace WorldBuild.Mod.Modules
             }
         }
 
-        void LateUpdate()
+        private void Update()
         {
             ForceRefresh();
         }

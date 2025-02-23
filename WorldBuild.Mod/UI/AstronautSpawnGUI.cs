@@ -25,6 +25,8 @@ namespace WorldBuild.Mod.UI
             };
         }
 
+        private bool windowState;
+
         public override void Update()
         {
             if (!elements.ContainsKey("oxygenAvail")) return;
@@ -32,10 +34,15 @@ namespace WorldBuild.Mod.UI
             var plr = PlayerController.main.player.Value;
             if (!plr) return;
 
-            var rox = plr.GetComponent<RocketOxygen>();
+            var rox = plr.GetComponent<RocketResources>();
             if (!rox) return;
+            
+            if (window != null)
+            {
+                windowState = window.As<ClosableWindow>().Minimized;
+            }
 
-            double timeLeft = rox.CalculateOxygenAvailable();
+            double timeLeft = rox.CalculateResourceAvailable();
 
             if (!(elements["oxygenAvail"] is Label label))
             {
@@ -54,7 +61,11 @@ namespace WorldBuild.Mod.UI
 
         public override void GenerateGUI()
         {
-            window = UIToolsBuilder.CreateClosableWindow(holder.transform, Builder.GetRandomID(), 384, 256, 300, 300, true, true, 0.95f, "Astronaut Manager");
+            int width = 384;
+            int height = 160;
+            var coords = WindowPositionHelper.GenerateWindowCoords(0, -80, width, height, Anchor.TopCenter, Origin.TopCenter);
+            window = UIToolsBuilder.CreateClosableWindow(holder.transform, WindowID, width, height, coords.x, coords.y, false, false, 0.95f, "Astronaut Manager");
+            window.As<ClosableWindow>().Minimized = windowState;
             VerticalDefGroup();
 
             if (AstronautManager.main.eva.Count == 0)
@@ -62,7 +73,7 @@ namespace WorldBuild.Mod.UI
                 if (CapsuleScanner.main.selectedCapsule.Value.cm == null)
                 {
                     elements.Add("selectNote", Builder.CreateLabel(window, 352, 32, text: "Select a capsule first! (click one with RMB)"));
-                    window.Size = new UnityEngine.Vector2(window.Size.x, 128);
+                    window.Size = new UnityEngine.Vector2(window.Size.x, 108);
                     return;
                 }
 

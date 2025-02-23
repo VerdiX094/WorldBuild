@@ -36,14 +36,15 @@ namespace WorldBuild.Mod.UI
 
             if (eva.GetComponent<Astronaut>() == null) return;
 
-            (Elements["oxygenLeftApprox"] as Label).Text = $"Oxygen left: {Utility.StringifyTime(eva.GetComponent<Astronaut>().GetOxygenSecondsLeft())} {(eva.GetComponent<Astronaut>().BreathingAir ? "(air)" : "")}";
+            Elements["oxygenLeftApprox"].As<Label>().Text = $"Oxygen left: {Utility.StringifyTime(eva.GetComponent<Astronaut>().GetOxygenSecondsLeft())} {(eva.GetComponent<Astronaut>().BreathingAir ? "(air)" : "")}";
+            Elements["resLeft"].As<Label>().Text = $"Resources left: {eva.GetComponent<Astronaut>().materialLeft}";
         }
 
         public override void GenerateGUI() 
         {
-            var coords = WindowPositionHelper.GenerateWindowCoords(0, 16, 384, 224, Anchor.BottomCenter, Origin.BottomCenter);
+            var coords = WindowPositionHelper.GenerateWindowCoords(0, 16, 384, 268, Anchor.BottomCenter, Origin.BottomCenter);
 
-            window = Builder.CreateWindow(holder.transform, WindowID, 384, 224, coords.x, coords.y, false, false, 0.95f, "Astronaut");
+            window = Builder.CreateWindow(holder.transform, WindowID, 384, 268, coords.x, coords.y, false, false, 0.95f, "Astronaut");
             VerticalDefGroup();
 
             elements.Add("main", Builder.CreateContainer(window));
@@ -87,6 +88,7 @@ namespace WorldBuild.Mod.UI
             ));
 
             elements.Add("oxygenLeftApprox", Builder.CreateLabel(main, 352, 32, text: "Oxygen left: 0m 0s"));
+            elements.Add("resLeft", Builder.CreateLabel(main, 352, 32, text: "Resources left: 0"));
             #endregion
         }
     }

@@ -15,7 +15,7 @@ namespace WorldBuild.Mod.Managers
 {
     public class AstronautSpawner : WorldManager<AstronautSpawner>
     {
-        private Rocket lastRocket;
+        public Rocket lastRocket;
 
         public Astronaut_EVA eva;
 
@@ -48,7 +48,7 @@ namespace WorldBuild.Mod.Managers
         {
             if (!(PlayerController.main.player.Value is Astronaut_EVA curEva)) return;
 
-            rocket.GetComponent<RocketOxygen>().ReturnOxygen(eva.GetComponent<Astronaut>().GetOxygenSecondsLeft());
+            rocket.GetComponent<RocketResources>().ReturnResource(eva.GetComponent<Astronaut>().GetOxygenSecondsLeft());
 
             AstronautManager.DestroyEVA(curEva, false);
 
@@ -81,11 +81,11 @@ namespace WorldBuild.Mod.Managers
             
             if (!(PlayerController.main.player.Value is Rocket rocket)) return;
             
-            var ox = rocket.GetComponent<RocketOxygen>();
+            var ox = rocket.GetComponent<RocketResources>();
 
             if (!ox) return;
 
-            if (ox.CalculateOxygenAvailable() < 30)
+            if (ox.CalculateResourceAvailable() < 30)
             {
                 MsgDrawer.main.Log("Not enough oxygen for at least 30 seconds of EVA");
                 return;
@@ -94,22 +94,26 @@ namespace WorldBuild.Mod.Managers
             var player = PlayerController.main.player.Value;
             var loc = player.location.Value;
 
-            var eva = StartAndGetEVA(new Location(loc.planet, WorldView.ToGlobalPosition(CapsuleScanner.main.selectedCapsule.Value.GetGlobalPosition()), loc.velocity), player.transform.rotation.z);
-
+            eva = StartAndGetEVA(new Location(loc.planet, WorldView.ToGlobalPosition(CapsuleScanner.main.selectedCapsule.Value.GetGlobalPosition()), loc.velocity), player.transform.rotation.z);
+            
+            IEWInjector.ForceRefresh();
+            
             Astronaut astronaut = eva.GetComponent<Astronaut>();
             AstronautManagementGUI.main.OnFrame(); // refresh gui so the elements can be added to dict
             
-            astronaut.maxOxygen = rocket.GetComponent<RocketOxygen>().RequestOxygen(astronaut.maxOxygen);
+            astronaut.maxOxygen = rocket.GetComponent<RocketResources>().RequestResource(astronaut.maxOxygen);
+            astronaut.materialLeft = rocket.GetComponent<RocketResources>().RequestResource(Astronaut.maxMaterial, RocketResources.ResourceType.BuildResource);
 
-            if (astronaut.maxOxygen == -1)
+            if (astronaut.maxOxygen.AboutEqual(-1))
             {
                 AstronautManager.DestroyEVA(eva, false);
                 return;
             }
 
             PlayerController.main.SmoothChangePlayer(eva);
-
-            this.eva = eva;
+            
+            PlayerPrefs.SetInt("WORLDBUILD_STATS_EVA_COUNT", PlayerPrefs.GetInt("WORLDBUILD_STATS_EVA_COUNT", 0) + 1);
+            PlayerPrefs.Save();
         }
 
         public Astronaut_EVA StartAndGetEVA(Location loc, float rotation, float angVel = 0, bool ragdoll = false, double fuelPercent = 1, float temperature = 0f)
@@ -120,15 +124,15 @@ namespace WorldBuild.Mod.Managers
             if (AstronautState.main.GetAstronautByName("WorldBuild EVA") == null)
                 AstronautState.main.CreateAstronaut("WorldBuild EVA");
 
-            var eva = AstronautManager.main.SpawnEVA("WorldBuild EVA",
+            var spawned = AstronautManager.main.SpawnEVA("WorldBuild EVA",
                 loc,
                 rotation, 0, false, 1, 0);
 
-            eva.gameObject.name = "WorldBuild Astronaut";
+            spawned.gameObject.name = "WorldBuild Astronaut";
 
             AstronautDataHelper.main.SaveData.evaActive = true;
             
-            return eva;
+            return spawned;
         }
 
         //private bool CheckWorld() => Utility.CheckSceneLoaded("World_PC");

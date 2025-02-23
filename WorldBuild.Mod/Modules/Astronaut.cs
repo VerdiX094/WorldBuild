@@ -1,7 +1,10 @@
-﻿using SFS.UI.ModGUI;
+﻿using System;
+using SFS.UI.ModGUI;
 using SFS.World;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using SFS.Parts.Modules;
 using UnityEngine;
 using WorldBuild.Mod.UI;
 using WorldBuild.Mod.Managers;
@@ -14,12 +17,12 @@ namespace WorldBuild.Mod.Modules
     {
         public double maxOxygen = 300;
 
-        public float materialLeft = 0;
+        public double materialLeft = 0;
+        public const float maxMaterial = 20f;
 
         private double oxygenSeconds = double.NegativeInfinity;
 
         private double lastTime;
-
         public bool BreathingAir;
 
         public double GetOxygenSecondsLeft()

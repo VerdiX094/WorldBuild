@@ -16,7 +16,7 @@ namespace WorldBuild.Mod.Patches
         public static bool Prefix(ref bool __result)
         {
             __result = AstronautSpawner.main.eva == null;
-            return AstronautSpawner.main.eva == null;
+            return __result;
         }
     }
 }

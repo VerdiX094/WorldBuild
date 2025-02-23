@@ -42,5 +42,10 @@ namespace WorldBuild.Mod
             patcher.PatchAll();
             ManagerInjector.Inject();
         }
+
+        public override void Load()
+        {
+            Keybindings.SetupKeybindings();
+        }
     }
 }

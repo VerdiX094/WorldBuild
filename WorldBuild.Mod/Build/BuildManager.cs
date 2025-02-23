@@ -15,6 +15,8 @@ using WorldBuild.Mod.Managers;
 using WorldBuild.Mod.UI;
 using System.Collections;
 using System.Net.Sockets;
+using System.Threading.Tasks;
+using WorldBuild.Mod.Modules;
 
 namespace WorldBuild.Mod.Build
 {
@@ -49,7 +51,7 @@ namespace WorldBuild.Mod.Build
             set
             {
                 _partState = value;
-                //SetPartColor(_partState == PartPlacementState.Allowed ? new Color(0, 1, 0, 0.5f) : new Color(1, 0, 0, 0.5f));
+                SetPartColor(_partState == PartPlacementState.Allowed ? new Color(0, 1, 0, 0.5f) : new Color(1, 0, 0, 0.5f));
             }
         }
 
@@ -121,6 +123,44 @@ namespace WorldBuild.Mod.Build
             partTargetPos += (Vector2)PlayerController.main.player.Value.transform.position - lastAstronautPosition;
         }
 
+        PartPlacementState CalculateCollidersAndGetState(Dictionary<Rocket, List<PartCollider>> rocketColliders = null)
+        {
+            if (rocketColliders == null)
+            {
+                rocketColliders = new Dictionary<Rocket, List<PartCollider>>();
+                foreach (Rocket rkt in GameManager.main.rockets.Where(r => r.physics.loader.Loaded))
+                {
+                    rocketColliders.Add(rkt, CreateBuildColliders(rkt.partHolder.GetArray()));
+                }
+            }
+
+            foreach (ConvexPolygon partPoly in heldPartColliders.SelectMany((col) => col.colliders))
+            {
+                foreach (KeyValuePair<Rocket, List<PartCollider>> kvp in rocketColliders)
+                {
+                    foreach (ConvexPolygon rocketPoly in kvp.Value.SelectMany((col) => col.colliders))
+                    {
+                        if (ConvexPolygon.Intersect(partPoly, rocketPoly, -0.08f))
+                        {
+                            return PartPlacementState.ClippingRocket;
+                        }
+                    }
+                }
+
+                // ! TODO: Fix part/terrain clipping detection
+                // foreach (Vector2 point in partPoly.points)
+                // {
+                //     Double2 worldPos = WorldView.ToGlobalPosition(heldPart.transform.TransformPoint(point));
+                //     if (WorldView.main.ViewLocation.planet.IsInsideTerrain(worldPos, -15))
+                //     {
+                //         PartPlacementState = PartPlacementState.ClippingTerrain;
+                //         return;
+                //     }
+                // }
+            }
+            return PartPlacementState.Allowed;
+        }
+
         void Update()
         {
             if (heldPart == null)
@@ -144,6 +184,23 @@ namespace WorldBuild.Mod.Build
                 pos = closestRocket.partHolder.transform.TransformPoint(localPos.Round(0.5f));
             }
             heldPart.transform.position = pos;
+        }
+
+        IEnumerator PartColliderCalculation()
+        {
+            while (heldPart != null)
+            {
+                RefreshPartColliders();
+                PartPlacementState = CalculateCollidersAndGetState();
+                if (AstronautSpawner.main.eva.GetComponent<Astronaut>().materialLeft < PartPriceCalculator.Calculate(heldPart))
+                    PartPlacementState = PartPlacementState.TooExpensive;
+                int runEvery = 8; //th frame
+
+                for (int i = 0; i < runEvery; i++)
+                {
+                    yield return null;
+                }
+            }
         }
 
         List<PartCollider> CreateBuildColliders(params Part[] parts)
@@ -230,6 +287,7 @@ namespace WorldBuild.Mod.Build
             RefreshPartColliders();
 
             StartCoroutine(nameof(InitialDragCoro));
+            StartCoroutine(nameof(PartColliderCalculation));
 
             GUIManager.main.GetUI<PartControlsGUI>().NewGUI();
         }
@@ -246,40 +304,7 @@ namespace WorldBuild.Mod.Build
                 return;
 
             RefreshPartColliders();
-
-            var rocketColliders = new Dictionary<Rocket, List<PartCollider>>();
-            foreach (Rocket rkt in GameManager.main.rockets.Where(r => r.physics.loader.Loaded))
-            {
-                rocketColliders.Add(rkt, CreateBuildColliders(rkt.partHolder.GetArray()));
-            }
-
-            PartPlacementState = PartPlacementState.Allowed;
-
-            // * Update part placement validity.
-            foreach (ConvexPolygon partPoly in heldPartColliders.SelectMany((PartCollider col) => col.colliders))
-            {
-                foreach (KeyValuePair<Rocket, List<PartCollider>> kvp in rocketColliders)
-                {
-                    foreach (ConvexPolygon rocketPoly in kvp.Value.SelectMany((PartCollider col) => col.colliders))
-                    {
-                        if (ConvexPolygon.Intersect(partPoly, rocketPoly, -0.08f))
-                        {
-                            PartPlacementState = PartPlacementState.ClippingRocket;
-                        }
-                    }
-                }
-
-                // ! TODO: Fix part/terrain clipping detection
-                // foreach (Vector2 point in partPoly.points)
-                // {
-                //     Double2 worldPos = WorldView.ToGlobalPosition(heldPart.transform.TransformPoint(point));
-                //     if (WorldView.main.ViewLocation.planet.IsInsideTerrain(worldPos, -15))
-                //     {
-                //         PartPlacementState = PartPlacementState.ClippingTerrain;
-                //         return;
-                //     }
-                // }
-            }
+            PartPlacementState = CalculateCollidersAndGetState();
 
             if (PartPlacementState == PartPlacementState.ClippingRocket)
             {
@@ -291,6 +316,17 @@ namespace WorldBuild.Mod.Build
                 MsgDrawer.main.Log("Cannot build part inside the ground! (enable the Part Clipping cheat for that)");
                 return;
             }
+
+            int price = PartPriceCalculator.Calculate(heldPart);
+            var astronaut = AstronautSpawner.main.eva.GetComponent<Astronaut>();
+            
+            if (astronaut.materialLeft < price)
+            {
+                MsgDrawer.main.Log("Not enough resources!");
+                return;
+            }
+            
+            astronaut.materialLeft -= price;
 
             foreach (Collider2D col in disabledColliders)
             {
@@ -403,7 +439,7 @@ namespace WorldBuild.Mod.Build
             {
                 if (heldPart != null)
                 {
-                    partTargetPos += newPos - oldPos;
+                    //partTargetPos += newPos - oldPos;
                 }
             }
         }
@@ -413,6 +449,7 @@ namespace WorldBuild.Mod.Build
     {
         ClippingTerrain,
         ClippingRocket,
+        TooExpensive,
         Allowed,
     }
 }

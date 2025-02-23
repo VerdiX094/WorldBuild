@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using SFS.UI.ModGUI;
 using UnityEngine.UI;
 using SFS.Parts.Modules;
+using UnityEngine;
 
 namespace WorldBuild.Mod.UI
 {
@@ -34,25 +35,17 @@ namespace WorldBuild.Mod.UI
             elements["transformHld"].As<Container>().CreateLayoutGroup(SFS.UI.ModGUI.Type.Horizontal, spacing: 8);
 
             elements["flipHoriz"] = Builder.CreateButton(elements["transformHld"], width / 4 - 12, 45, onClick: () => {
-                var val = BuildManager.main.heldPart.orientation.orientation.Value;
-                BuildManager.main.heldPart.orientation.orientation.Value = new SFS.Parts.Modules.Orientation(val.x * -1, val.y, val.z);
-                BuildManager.main.heldPart.RegenerateMesh();
+                Utility.ScalePart(BuildManager.main.heldPart, new Vector2(-1, 1));
             }, text: "Horiz");
             elements["flipVert"] = Builder.CreateButton(elements["transformHld"], width / 4 - 12, 45, onClick: () => {
-                var val = BuildManager.main.heldPart.orientation.orientation.Value;
-                BuildManager.main.heldPart.orientation.orientation.Value = new SFS.Parts.Modules.Orientation(val.x, val.y * -1, val.z);
-                BuildManager.main.heldPart.RegenerateMesh();
+                Utility.ScalePart(BuildManager.main.heldPart, new Vector2(1, -1));
             }, text: "Vert");
 
             elements["rotLeft"] = Builder.CreateButton(elements["transformHld"], width / 4 - 12, 45, onClick: () => {
-                var val = BuildManager.main.heldPart.orientation.orientation.Value;
-                BuildManager.main.heldPart.orientation.orientation.Value = new SFS.Parts.Modules.Orientation(val.x, val.y, val.z + 90);
-                BuildManager.main.heldPart.RegenerateMesh();
+                Utility.RotatePart(BuildManager.main.heldPart, 90f);
             }, text: "Left");
             elements["rotRight"] = Builder.CreateButton(elements["transformHld"], width / 4 - 12, 45, onClick: () => {
-                var val = BuildManager.main.heldPart.orientation.orientation.Value;
-                BuildManager.main.heldPart.orientation.orientation.Value = new SFS.Parts.Modules.Orientation(val.x, val.y, val.z - 90);
-                BuildManager.main.heldPart.RegenerateMesh();
+                Utility.RotatePart(BuildManager.main.heldPart, -90f);
             }, text: "Right");
 
 
@@ -62,7 +55,7 @@ namespace WorldBuild.Mod.UI
 
             var part = BuildManager.main.heldPart;
 
-            elements["info"] = Builder.CreateLabel(window, width - 24, 0, text: $"--- Part Info ---\nName: {part.displayName.Field.subs[0]}\nMass: {part.mass.Value}t\n--- Stats ---\n{Utility.GetStats(part)}");
+            elements["info"] = Builder.CreateLabel(window, width - 24, 0, text: $"--- Part Info ---\nName: {part.displayName.Field.subs[0]}\nMass: {part.mass.Value}t\nRequired resources: {PartPriceCalculator.Calculate(part)}\n--- Stats ---\n{Utility.GetStats(part)}");
 
             elements["info"].As<Label>().AutoFontResize = false;
             elements["info"].As<Label>().FontSize = 32;

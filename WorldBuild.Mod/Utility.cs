@@ -62,6 +62,20 @@ namespace WorldBuild.Mod
             return component.gameObject.GetComponent(type) ?? component.gameObject.AddComponent(type);
         }
 
+        public static void RotatePart(Part part, float deltaAngle)
+        {
+            var val = part.orientation.orientation.Value;
+            part.orientation.orientation.Value = new Orientation(val.x, val.y, val.z + deltaAngle);
+            part.RegenerateMesh();
+        }
+
+        public static void ScalePart(Part part, Vector2 mult)
+        {
+            var val = part.orientation.orientation.Value;
+            part.orientation.orientation.Value = new Orientation(val.x * mult.x, val.y * mult.y, val.z);
+            part.RegenerateMesh();
+        }
+
         public static string StringifyTime(double seconds)
         {
             int hoursLeft = (int)(seconds / 3600);
@@ -127,6 +141,16 @@ namespace WorldBuild.Mod
             }
 
             return result.ToString();
+        }
+
+        public static bool AboutEqual(this float a, float b, float tolerance = 0.0001f)
+        {
+            return a - b < tolerance;
+        }
+        
+        public static bool AboutEqual(this double a, double b, double tolerance = 0.0000001)
+        {
+            return a - b < tolerance;
         }
     }
 }

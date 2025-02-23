@@ -26,7 +26,7 @@ namespace WorldBuild.Mod.Managers
                 Debugger.Log("chuj kurwa");
                 var varMod = capsule.GetComponent<VariablesModule>();
 
-                varMod.doubleVariables.SetValue("oxygen", CapsuleOxygen.MaxOxygen, (true, true));
+                varMod.doubleVariables.SetValue("oxygen", CapsuleResources.MaxOxygen, (true, true));
 
                 // the workaround for the variables bug
                 varMod.boolVariables.SetValue("oxygenInitialized", false, (true, true));
