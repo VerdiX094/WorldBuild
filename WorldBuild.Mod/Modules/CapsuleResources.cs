@@ -1,5 +1,6 @@
 ﻿using SFS.Variables;
 using SFS.World;
+using WorldBuild.Mod.Build;
 
 namespace WorldBuild.Mod.Modules
 {
@@ -22,18 +23,18 @@ namespace WorldBuild.Mod.Modules
             set => varMod.doubleVariables.SetValue("evares", value, (true, true));
         }
 
-        private void Awake()
+        private void Start()
         {
             varMod = GetComponent<VariablesModule>();
 
             if (!varMod.boolVariables.GetValue("oxygenInitialized"))
             {
-                Oxygen = MaxOxygen;
+                Oxygen = BuildManager.PlacedFrames <= 2 ? 0 : MaxOxygen;
                 varMod.boolVariables.SetValue("oxygenInitialized", true);
             }
             if (!varMod.boolVariables.GetValue("evaresInitialized"))
             {
-                EVARes = MaxEVARes;
+                EVARes = BuildManager.PlacedFrames <= 2 ? 0 : MaxEVARes;
                 varMod.boolVariables.SetValue("evaresInitialized", true);
             }
         }

@@ -49,9 +49,10 @@ namespace WorldBuild.Mod.UI
             }, text: "Right");
 
 
-            elements["openEditor"] = Builder.CreateButton(window, width - 24, 45, onClick: () => GUIManager.main.GetUI<VariableEditorGUI>().OpenEditor(), text: "Edit values");
+            //elements["openEditor"] = Builder.CreateButton(window, width - 24, 45, onClick: () => GUIManager.main.GetUI<VariableEditorGUI>().OpenEditor(), text: "Edit values");
 
             elements["sep"] = Builder.CreateSeparator(window, width - 24);
+            Builder.CreateSpace(window, 0, 8);
 
             var part = BuildManager.main.heldPart;
 

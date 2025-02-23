@@ -41,7 +41,11 @@ namespace WorldBuild.Mod.Build
         PartPlacementState _partState;
 
         Vector2 lastAstronautPosition;
+        
+        Vector2 GetPlayerPosition => PlayerController.main.player.Value.GetComponentInChildren<PartHolder>().transform.position;
 
+        public static int PlacedFrames = int.MaxValue;
+        
         PartPlacementState PartPlacementState
         {
             get
@@ -115,12 +119,11 @@ namespace WorldBuild.Mod.Build
 
         void InitializeAstronautFollow()
         {
-            lastAstronautPosition = PlayerController.main.player.Value.transform.position;
+            lastAstronautPosition = GetPlayerPosition;
         }
 
         void FollowAstronaut()
         {
-            partTargetPos += (Vector2)PlayerController.main.player.Value.transform.position - lastAstronautPosition;
         }
 
         PartPlacementState CalculateCollidersAndGetState(Dictionary<Rocket, List<PartCollider>> rocketColliders = null)
@@ -160,14 +163,15 @@ namespace WorldBuild.Mod.Build
             }
             return PartPlacementState.Allowed;
         }
-
+        
         void Update()
         {
             if (heldPart == null)
                 return;
 
-            FollowAstronaut();
-
+            partTargetPos += GetPlayerPosition - lastAstronautPosition;
+            InitializeAstronautFollow();
+            
             rotOffset = heldPart.orientation.orientation.Value.z;
 
             closestRocket = GetBestRocket(GameManager.main.rockets.ToArray());
@@ -184,6 +188,8 @@ namespace WorldBuild.Mod.Build
                 pos = closestRocket.partHolder.transform.TransformPoint(localPos.Round(0.5f));
             }
             heldPart.transform.position = pos;
+
+            PlacedFrames++;
         }
 
         IEnumerator PartColliderCalculation()
@@ -365,11 +371,12 @@ namespace WorldBuild.Mod.Build
             //TODO rocket.GetRotation()
             rocket.SetJointGroup(group);
             heldPart.transform.localPosition = Vector3.zero;
-
+            
             Reset:
                 ResetPartColor();
                 draggingPart = false;
                 heldPart = null;
+                PlacedFrames = 0;
         }
 
         public void SetPartColor(Color color)

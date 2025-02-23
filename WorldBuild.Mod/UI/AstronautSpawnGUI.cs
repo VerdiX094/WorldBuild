@@ -51,6 +51,7 @@ namespace WorldBuild.Mod.UI
             }
             
             label.Text = $"Available oxygen: {Utility.StringifyTime(timeLeft)}";
+            Elements["resAvail"].As<Label>().Text = $"Available resources: {rox.CalculateResourceAvailable(RocketResources.ResourceType.BuildResource)}";
         }
 
         private void OnPlayerChange(Player oldP, Player newP)
@@ -62,7 +63,7 @@ namespace WorldBuild.Mod.UI
         public override void GenerateGUI()
         {
             int width = 384;
-            int height = 160;
+            int height = 200;
             var coords = WindowPositionHelper.GenerateWindowCoords(0, -80, width, height, Anchor.TopCenter, Origin.TopCenter);
             window = UIToolsBuilder.CreateClosableWindow(holder.transform, WindowID, width, height, coords.x, coords.y, false, false, 0.95f, "Astronaut Manager");
             window.As<ClosableWindow>().Minimized = windowState;
@@ -80,6 +81,10 @@ namespace WorldBuild.Mod.UI
                 elements.Add("oxygenAvail", Builder.CreateLabel(
                     window, 352, 32, text: "Available oxygen: [not calculated yet]"
                 ));
+                
+                elements.Add("resAvail", Builder.CreateLabel(
+                    window, 352, 32, text: "Available resources: [not calculated yet]"
+                ));
 
                 elements.Add("spawnBtn", Builder.CreateButton(window, 352, 45, onClick: () =>
                 {
@@ -88,6 +93,11 @@ namespace WorldBuild.Mod.UI
                 }, text: "Start EVA"));
             } else
             {
+                width = 384;
+                height = 120;
+                coords = WindowPositionHelper.GenerateWindowCoords(0, -80, width, height, Anchor.TopCenter, Origin.TopCenter);
+                window.Size = new UnityEngine.Vector2(width, height);
+                window.Position = coords;
                 elements.Add("switchToRkt", Builder.CreateButton(window, 352, 45, onClick: () =>
                 {
                     PlayerController.main.SmoothChangePlayer(AstronautManager.main.eva[0]);

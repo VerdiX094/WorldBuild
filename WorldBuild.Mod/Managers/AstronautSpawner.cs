@@ -49,6 +49,7 @@ namespace WorldBuild.Mod.Managers
             if (!(PlayerController.main.player.Value is Astronaut_EVA curEva)) return;
 
             rocket.GetComponent<RocketResources>().ReturnResource(eva.GetComponent<Astronaut>().GetOxygenSecondsLeft());
+            rocket.GetComponent<RocketResources>().ReturnResource(eva.GetComponent<Astronaut>().materialLeft, true, RocketResources.ResourceType.BuildResource);
 
             AstronautManager.DestroyEVA(curEva, false);
 

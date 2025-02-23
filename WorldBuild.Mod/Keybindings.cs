@@ -18,6 +18,8 @@ namespace WorldBuild.Mod
             
             CreateUI_Text("WorldBuild Keybindings");
             
+            CreateUI_Keybinding(Run, Run.key, "Run");
+            
             CreateUI_Keybinding(Place, Place.key, "Place part");
             CreateUI_Keybinding(Delete, Delete.key, "Delete part");
             CreateUI_Keybinding(RotateLeft, RotateLeft.key, "Rotate left");
@@ -71,11 +73,12 @@ namespace WorldBuild.Mod
         
         public KeybindingsPC.Key Place = KeyCode.Return;
         public KeybindingsPC.Key Delete = KeyCode.Delete;
-        public KeybindingsPC.Key RotateLeft = KeybindingsPC.Key.Ctrl_(KeyCode.E);
-        public KeybindingsPC.Key RotateRight = KeybindingsPC.Key.Ctrl_(KeyCode.Q);
-        public KeybindingsPC.Key FlipHorizontally = KeybindingsPC.Key.Ctrl_(KeyCode.A);
-        public KeybindingsPC.Key FlipHorizontally2 = KeybindingsPC.Key.Ctrl_(KeyCode.D);
-        public KeybindingsPC.Key FlipVertically = KeybindingsPC.Key.Ctrl_(KeyCode.W);
-        public KeybindingsPC.Key FlipVertically2 = KeybindingsPC.Key.Ctrl_(KeyCode.S);
+        public KeybindingsPC.Key RotateLeft = KeyCode.Q;
+        public KeybindingsPC.Key RotateRight = KeyCode.E;
+        public KeybindingsPC.Key FlipHorizontally = KeyCode.LeftArrow;
+        public KeybindingsPC.Key FlipHorizontally2 = KeyCode.RightArrow;
+        public KeybindingsPC.Key FlipVertically = KeyCode.UpArrow;
+        public KeybindingsPC.Key FlipVertically2 = KeyCode.DownArrow;
+        public KeybindingsPC.Key Run = KeyCode.LeftShift;
     }
 }

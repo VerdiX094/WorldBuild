@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Reflection.Emit;
 using HarmonyLib;
 using SFS.World;
@@ -14,7 +15,7 @@ namespace WorldBuild.Mod.Patches
         [HarmonyPrefix]
         public static bool Prefix(ref float __result, Astronaut_EVA __instance)
         {
-            __result = __instance.maxSpeed.Evaluate((float) __instance.location.planet.Value.data.basics.gravity / 9.8f) * (Input.GetKey(KeyCode.LeftControl) ? 1.6667f : 1f);
+            __result = __instance.maxSpeed.Evaluate((float) __instance.location.planet.Value.data.basics.gravity / 9.8f) * (Input.GetKey(Keybindings.main.Run.key) ? 1.6667f : 1f);
             return false;
         }
     }
@@ -33,7 +34,7 @@ namespace WorldBuild.Mod.Patches
                     codes[i] = new CodeInstruction(OpCodes.Ldc_R8, 8.0);
                 }
             }
-
+            
             return codes.AsEnumerable();
         }
     }

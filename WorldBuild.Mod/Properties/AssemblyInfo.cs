@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Fusion Space Industries")]
 [assembly: AssemblyProduct("WorldBuild.Mod")]
-[assembly: AssemblyCopyright("Copyright ©  2024 Fusion Space Industries")]
+[assembly: AssemblyCopyright("Copyright ©  2025 Fusion Space Industries")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
