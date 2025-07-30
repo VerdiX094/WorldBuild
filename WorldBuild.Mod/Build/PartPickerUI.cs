@@ -40,7 +40,7 @@ namespace WorldBuild.Mod.Build
         public static CategoryParts[] pickCategories = null;
         public static CategoryParts selectedCategory = null;
         /// <summary>
-        /// Pseudo-mirror of <c>BuildManager.main.pickGrid.categoryOrder</c>
+        /// Pseudo-mirror of <c>WorldBuildManager.main.pickGrid.categoryOrder</c>
         /// </summary>
         public static List<PickCategory> categoryOrder = new List<PickCategory>();
         // {
@@ -152,7 +152,7 @@ namespace WorldBuild.Mod.Build
                 Builder.CreateLabel(window_categories, size_categories.x - 15, 45, text: "Vanilla");
             }
 
-            foreach (CategoryParts category in pickCategories
+            foreach (var category in pickCategories
                 .Where(cat => vanillaCats.Contains(cat.tag.displayName.Field)).ToList()
                 .KeySort(cat => Array.IndexOf(vanillaCats, cat.tag.displayName.Field), false)
                 )
@@ -165,7 +165,7 @@ namespace WorldBuild.Mod.Build
                 Builder.CreateLabel(window_categories, size_categories.x - 15, 45, text: "Modded");
             }
 
-            foreach (CategoryParts cat in pickCategories.Where(cat => !vanillaCats.Contains(cat.tag.displayName.Field)))
+            foreach (var cat in pickCategories.Where(cat => !vanillaCats.Contains(cat.tag.displayName.Field)))
             {
                 CreateCategory(cat);
             }
@@ -196,23 +196,23 @@ namespace WorldBuild.Mod.Build
             window_parts.CreateLayoutGroup(Type.Vertical, TextAnchor.UpperCenter, 10f, new RectOffset(5, 5, 5, 5));
             window_parts.EnableScrolling(Type.Vertical);
 
-            foreach ((bool owned, VariantRef variant) in selectedCategory.parts)
+            foreach ((var owned, var variant) in selectedCategory.parts)
             {
                 if (owned)
                 {
-                    if (!createdParts.TryGetValue(variant, out Part part) || part == null)
+                    if (!createdParts.TryGetValue(variant, out var part) || part == null)
                     {
                         part = PartsLoader.CreatePart(variant, true);
                         part.transform.parent = createdPartsHolder;
                         part.gameObject.SetActive(false);
                         createdParts.Add(variant, part);
                     }
-                    Button button = CreatePartIcon(window_parts, part);
+                    var button = CreatePartIcon(window_parts, part);
                     
                     button.onDown += data =>
                     {
                         if (data.inputType == InputType.MouseLeft)
-                            BuildManager.main.CreateNewPart(variant, data.position.World(0f));
+                            WorldBuildManager.main.CreateNewPart(variant, data.position.World(0f));
                     };
                     button.onClick += () => Debugger.Log("TODO: Part info box.");
                     button.onRightClick += () => Debugger.Log("TODO: Part info box.");
@@ -237,13 +237,13 @@ namespace WorldBuild.Mod.Build
         // ? Derived from `SFS.Builds.PickGridUI.Initialize`.
         private static CategoryParts[] GetPickCategories()
         {
-            Dictionary<PickCategory, CategoryParts> dictionary = new Dictionary<PickCategory, CategoryParts>();
-            foreach (VariantRef value in Base.partsLoader.partVariants.Values)
+            var dictionary = new Dictionary<PickCategory, CategoryParts>();
+            foreach (var value in Base.partsLoader.partVariants.Values)
             {
-                Part part = PartsLoader.CreatePart(value, updateAdaptation: true);
-                bool item = part.GetOwnershipState() == OwnershipState.OwnedAndUnlocked && CareerState.main.HasPart(value);
+                var part = PartsLoader.CreatePart(value, updateAdaptation: true);
+                var item = part.GetOwnershipState() == OwnershipState.OwnedAndUnlocked && CareerState.main.HasPart(value);
                 Object.DestroyImmediate(part.gameObject);
-                foreach (Variants.PickTag pickTag in value.GetPickTags())
+                foreach (var pickTag in value.GetPickTags())
                 {
                     if (pickTag.tag == null)
                     {
@@ -261,7 +261,7 @@ namespace WorldBuild.Mod.Build
                 }
             }
             dictionary = dictionary.Where(pair => pair.Value.parts.Any(a => a.owned)).ToDictionary(pair => pair.Key, pair => pair.Value);
-            foreach (PickCategory category in dictionary.Keys)
+            foreach (var category in dictionary.Keys)
             {
                 dictionary[category].parts = dictionary[category].parts.OrderBy(((bool owned, VariantRef part) variant) => -variant.part.GetPriority(category)).ToList();
             }
@@ -270,7 +270,7 @@ namespace WorldBuild.Mod.Build
 
         static Button CreatePartIcon(Transform holder, Part part)
         {
-            GameObject go = new GameObject
+            var go = new GameObject
             (
                 $"World Build: Part Icon ({part.name})",
                 typeof(RectTransform),
@@ -279,16 +279,16 @@ namespace WorldBuild.Mod.Build
             );
             go.transform.SetParent(holder, false);
 
-            Button button = go.AddComponent<Button>();
+            var button = go.AddComponent<Button>();
             button.clickEvent = new SFS.UI.ClickUnityEvent();
             button.holdEvent = new SFS.UI.HoldUnityEvent();
 
-            RawImage img = go.GetComponent<RawImage>();
+            var img = go.GetComponent<RawImage>();
             part.gameObject.SetActive(true);
-            img.texture = PartIconCreator.main.CreatePartIcon_PickGrid(part, out Vector2 size);
+            img.texture = PartIconCreator.main.CreatePartIcon_PickGrid(part, out var size);
             part.gameObject.SetActive(false);
 
-            RectTransform rect = go.GetComponent<RectTransform>();
+            var rect = go.GetComponent<RectTransform>();
             rect.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, rect.rect.width * (size.y / size.x));
 
             return button;

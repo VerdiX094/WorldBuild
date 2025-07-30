@@ -64,11 +64,11 @@ namespace WorldBuild.Mod.UI
                 "endEVA",
                 Builder.CreateButton(main, 352, 48, text: "End EVA", onClick: () =>
                 {
-                    CapsuleScanner.BestCapsuleData best = new CapsuleScanner.BestCapsuleData();
+                    var best = new CapsuleScanner.BestCapsuleData();
 
-                    Vector2 pos = WorldView.ToLocalPosition(PlayerController.main.player.Value.location.position);
+                    var pos = WorldView.ToLocalPosition(PlayerController.main.player.Value.location.position);
 
-                    foreach (Rocket rocket in GameManager.main.rockets)
+                    foreach (var rocket in GameManager.main.rockets)
                     {
                         var data = CapsuleScanner.main.FindBest(rocket, pos, 3f);
 

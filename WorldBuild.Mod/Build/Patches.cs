@@ -18,7 +18,7 @@ namespace WorldBuild.Mod.Build
         {
             static bool Prefix()
             {
-                return !BuildManager.main.draggingPart;
+                return !WorldBuildManager.main.draggingPart;
             }
         }
 
@@ -30,7 +30,7 @@ namespace WorldBuild.Mod.Build
         {
             static bool Prefix()
             {
-                return !BuildManager.main.worldBuildActive;
+                return !WorldBuildManager.main.worldBuildActive;
             }
         }
 
@@ -42,7 +42,7 @@ namespace WorldBuild.Mod.Build
         {
             static void Postfix()
             {
-                BuildManager.main.ExitBuild();
+                WorldBuildManager.main.ExitBuild();
             }
         }
 
@@ -54,7 +54,7 @@ namespace WorldBuild.Mod.Build
         {
             static void Prefix()
             {
-                BuildManager.main.ExitBuild();
+                WorldBuildManager.main.ExitBuild();
             }
         }
     }

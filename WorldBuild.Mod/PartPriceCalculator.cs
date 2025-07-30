@@ -15,9 +15,9 @@ namespace WorldBuild.Mod
     {
         public static int Calculate(Part part)
         {
-            float multiplier = GetPriceMultiplier(part);
+            var multiplier = GetPriceMultiplier(part);
 
-            float mass = Mathf.Max(1f, part.mass.Value);
+            var mass = Mathf.Max(1f, part.mass.Value);
             
             return (int) (mass * multiplier * Mathf.Abs(part.orientation.orientation.Value.x * part.orientation.orientation.Value.y));
         }

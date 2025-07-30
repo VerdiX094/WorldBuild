@@ -1,4 +1,5 @@
-﻿using ModLoader.Helpers;
+﻿using System.Linq;
+using ModLoader.Helpers;
 using SFS;
 using SFS.IO;
 using SFS.Parsers.Json;
@@ -20,7 +21,7 @@ namespace WorldBuild.Mod.Saving
 
             var data = AstronautDataHelper.main.SaveData;
             
-            var loc = new Location(Base.planetLoader.planets[data.planetName], data.position, data.speed);
+            var loc = new Location(Base.planetLoader.planets.First(p => p.Value.codeName == data.planetName).Value, data.position, data.speed);
             
             var eva = AstronautSpawner.main.StartAndGetEVA(loc, data.rotation, data.rotationSpeed, false, data.fuelPercent, data.temperature);
 
@@ -60,6 +61,11 @@ namespace WorldBuild.Mod.Saving
                     saveFile.ReadText());
 
             Debugger.Log(AstronautDataHelper.main.SaveData.position.y);
+
+            if (Utility.CheckSceneLoaded("World_PC"))
+            {
+                OnAstronautSpawnerInitialized();
+            }
         }
     }
 }

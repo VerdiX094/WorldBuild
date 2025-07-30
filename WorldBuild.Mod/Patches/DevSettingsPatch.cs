@@ -15,12 +15,7 @@ namespace WorldBuild.Mod.Patches
         [HarmonyPostfix] 
         public static void Postfix(ref bool __result) 
         {
-            // testing if astronauts work without the patch
-            // they break
-            // ah, they break with the patch anyway, fuck this
-            // or maybe not
-            // or maybe
-            //__result = false;
+            __result = false;
         }
     }
 }

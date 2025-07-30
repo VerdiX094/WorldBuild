@@ -16,7 +16,7 @@ namespace WorldBuild.Mod.UI
         {
             Debugger.Log("WorldBuild.Mod.UI.GUIManager init");
 
-            foreach (Type type in Assembly.GetExecutingAssembly().GetTypes())
+            foreach (var type in Assembly.GetExecutingAssembly().GetTypes())
             {
                 if (!type.IsSubclassOf(typeof(GUIBase))) continue;
 

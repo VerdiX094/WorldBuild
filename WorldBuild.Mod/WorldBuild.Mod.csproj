@@ -52,6 +52,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Spaceflight Simulator\Spaceflight Simulator Game\Spaceflight Simulator_Data\Managed\UniTask.dll</HintPath>
     </Reference>
+    <Reference Include="Unity.TextMeshPro">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Spaceflight Simulator\Spaceflight Simulator Game\Spaceflight Simulator_Data\Managed\Unity.TextMeshPro.dll</HintPath>
+    </Reference>
     <Reference Include="UnityEngine">
       <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Spaceflight Simulator\Spaceflight Simulator Game\Spaceflight Simulator_Data\Managed\UnityEngine.dll</HintPath>
     </Reference>
@@ -302,12 +305,14 @@
   <ItemGroup>
     <Compile Include="Debugger.cs" />
     <Compile Include="Build\PartPickerUI.cs" />
-    <Compile Include="Build\BuildManager.cs" />
+    <Compile Include="Build\WorldBuildManager.cs" />
     <Compile Include="Keybindings.cs" />
     <Compile Include="Managers\AstronautSpawner.cs" />
     <Compile Include="Managers\BegForMoney.cs" />
+    <Compile Include="Managers\BuildManager.cs" />
+    <Compile Include="Managers\VABSurvivalManager.cs" />
     <Compile Include="Managers\WorldManager.cs" />
-    <Compile Include="Managers\CapsuleOxygenVariableInjector.cs" />
+    <Compile Include="Managers\CapsuleVariables.cs" />
     <Compile Include="CorrespondingTypes.cs" />
     <Compile Include="Managers\CustomCredits.cs" />
     <Compile Include="Entrypoint.cs" />
@@ -343,6 +348,7 @@
     <Compile Include="UI\AstronautManagementGUI.cs" />
     <Compile Include="UI\AstronautSpawnGUI.cs" />
     <Compile Include="Managers\CapsuleScanner.cs" />
+    <Compile Include="UI\CreateWorldUI.cs" />
     <Compile Include="UI\VanillaAstronautGUI.cs" />
     <Compile Include="UI\GUIBase.cs" />
     <Compile Include="UI\GUIManager.cs" />

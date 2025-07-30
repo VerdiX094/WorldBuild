@@ -66,7 +66,7 @@ namespace WorldBuild.Mod.Managers
                     lastRocket = rocket;
 
                 if (!(n is Astronaut_EVA))
-                    BuildManager.main.ExitBuild();
+                    WorldBuildManager.main.ExitBuild();
             };
             
             AstronautSavingManager.main.OnAstronautSpawnerInitialized();
@@ -99,7 +99,7 @@ namespace WorldBuild.Mod.Managers
             
             IEWInjector.ForceRefresh();
             
-            Astronaut astronaut = eva.GetComponent<Astronaut>();
+            var astronaut = eva.GetComponent<Astronaut>();
             AstronautManagementGUI.main.OnFrame(); // refresh gui so the elements can be added to dict
             
             astronaut.maxOxygen = rocket.GetComponent<RocketResources>().RequestResource(astronaut.maxOxygen);
@@ -110,7 +110,8 @@ namespace WorldBuild.Mod.Managers
                 AstronautManager.DestroyEVA(eva, false);
                 return;
             }
-
+            
+            AstronautDataHelper.main.SaveData.evaActive = true;
             PlayerController.main.SmoothChangePlayer(eva);
             
             PlayerPrefs.SetInt("WORLDBUILD_STATS_EVA_COUNT", PlayerPrefs.GetInt("WORLDBUILD_STATS_EVA_COUNT", 0) + 1);

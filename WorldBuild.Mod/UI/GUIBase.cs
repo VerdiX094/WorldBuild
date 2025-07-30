@@ -67,7 +67,7 @@ namespace WorldBuild.Mod.UI
                 return;
             }
 
-            for (int i = 0; i < holder.transform.childCount; i++)
+            for (var i = 0; i < holder.transform.childCount; i++)
             {
                 GameObject.Destroy(holder.transform.GetChild(i).gameObject);
             }
@@ -89,7 +89,7 @@ namespace WorldBuild.Mod.UI
                 shouldCallBegin = false;
             }
 
-            bool newActive = GOActiveCondition();
+            var newActive = GOActiveCondition();
 
             if (newActive && !holder.activeSelf)
             {

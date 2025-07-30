@@ -7,49 +7,62 @@ using UnityEngine.SceneManagement;
 using Cysharp.Threading.Tasks;
 using WorldBuild.Mod.Managers;
 using HarmonyLib;
+using UITools;
 
 namespace WorldBuild.Mod.Modules
 {
     public class IEWInjector : BaseManager<IEWInjector>
     {
-        private static List<(Type, Type)> IEWTypes = new List<(Type, Type)>();
-
+        private static List<(Type, Type)> _iewTypes = new List<(Type, Type)>();
+        private static int _typeCount = 0;
+        
+        public static HashSet<MonoBehaviour> IEWs = new HashSet<MonoBehaviour>(); 
+        
         private void Start()
         {
-            foreach (Type type in Assembly.GetExecutingAssembly().GetTypes())
+            foreach (var type in Assembly.GetExecutingAssembly().GetTypes())
             {
                 var baseType = type.BaseType;
                 if (baseType == null) continue;
                 if (baseType.IsGenericType && baseType.GetGenericTypeDefinition() == typeof(InjectEverywhereWith<>))
                 {
-                    IEWTypes.Add((type, baseType.GetGenericArguments()[0]));
+                    _iewTypes.Add((type, baseType.GetGenericArguments()[0]));
+                    _typeCount++;
                 }
             }
         }
         
         public static void ForceRefresh()
         {
-            for (int i = 0; i < SceneManager.sceneCount; i++)
+            for (var i = 0; i < SceneManager.sceneCount; i++)
             {
-                Scene s = SceneManager.GetSceneAt(i);
+                var s = SceneManager.GetSceneAt(i);
                 if (!s.isLoaded) continue;
 
                 var roots = s.GetRootGameObjects();
-                
-                for (int ri = 0; ri < roots.Length; ri++)
+
+                for (var ri = 0; ri < roots.Length; ri++)
                 {
-                    var root = roots[ri];
-                    for (int ti = 0; ti < IEWTypes.Count; ti++)
-                    {
-                        var type = IEWTypes[ti];
-                        var comps = root.GetComponentsInChildren(type.Item2);
-                        for (int ci = 0; ci < comps.Length; ci++)
-                        {
-                            comps[ci].GetOrAddComponent(type.Item1);
-                        }
-                    }
+                    AddRecursive(roots[ri].transform, _iewTypes);
                 }
             }
+        }
+        
+        static void AddRecursive(Transform t, List<(Type, Type)> types)
+        {
+            for (var i = 0; i < _typeCount; i++)
+            {
+                var pair = types[i];
+                if (t.GetComponent(pair.Item2) != null)
+                    t.GetOrAddComponent(pair.Item1);
+            }
+
+            var cc = t.childCount;
+
+            if (cc == 0) return;
+            
+            for (var i = 0; i < cc; i++)
+                AddRecursive(t.GetChild(i), types);
         }
 
         private void Update()

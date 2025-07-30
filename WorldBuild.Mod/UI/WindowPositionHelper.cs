@@ -50,10 +50,10 @@ namespace WorldBuild.Mod.UI
 
         public static Vector2Int GenerateWindowCoords(int x, int y, int width, int height, Anchor anchor = Anchor.MiddleCenter, Origin origin = Origin.TopCenter)
         {
-            int offsetX = (origin.EqualsAny(Origin.TopLeft, Origin.MiddleLeft, Origin.BottomLeft) ? 1
+            var offsetX = (origin.EqualsAny(Origin.TopLeft, Origin.MiddleLeft, Origin.BottomLeft) ? 1
                 : (origin.EqualsAny(Origin.TopRight, Origin.MiddleRight, Origin.BottomRight) ? -1 : 0)) * width / 2;
 
-            int offsetY = (origin.EqualsAny(Origin.MiddleLeft, Origin.MiddleCenter, Origin.MiddleRight) ? 1
+            var offsetY = (origin.EqualsAny(Origin.MiddleLeft, Origin.MiddleCenter, Origin.MiddleRight) ? 1
                 : (origin.EqualsAny(Origin.BottomLeft, Origin.BottomCenter, Origin.BottomRight) ? 2 : 0)) * height / 2;
 
             return ToCenterAnchor(new Vector2Int(x, y), anchor) + new Vector2Int(offsetX, offsetY);
@@ -79,7 +79,7 @@ namespace WorldBuild.Mod.UI
 
         private static RectTransform GetCanvasRect()
         {
-            GameObject temp = Builder.CreateHolder(Builder.SceneToAttach.BaseScene, "TEMP");
+            var temp = Builder.CreateHolder(Builder.SceneToAttach.BaseScene, "TEMP");
             var result = temp.transform.parent as RectTransform;
             Object.Destroy(temp);
             return result;

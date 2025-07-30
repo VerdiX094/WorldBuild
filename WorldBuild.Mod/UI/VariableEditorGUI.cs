@@ -11,7 +11,7 @@ namespace WorldBuild.Mod.UI
 {
     public class VariableEditorGUI : GUIBase
     {
-        public override Func<bool> GOActiveCondition => () => EditorActive && BuildManager.main.heldPart != null;
+        public override Func<bool> GOActiveCondition => () => EditorActive && WorldBuildManager.main.heldPart != null;
         public override string SceneToAttach => "World_PC";
 
         public bool EditorActive = false;
@@ -31,7 +31,7 @@ namespace WorldBuild.Mod.UI
             window = Builder.CreateWindow(holder.transform, WindowID, width, height, coords.x, coords.y);
             VerticalDefGroup();
 
-            var part = BuildManager.main.heldPart;
+            var part = WorldBuildManager.main.heldPart;
 
             foreach (var variablesDrawer in part.GetModules<VariablesDrawer>())
             {

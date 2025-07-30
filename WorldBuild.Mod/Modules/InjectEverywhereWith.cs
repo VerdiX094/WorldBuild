@@ -7,8 +7,16 @@ using UnityEngine;
 
 namespace WorldBuild.Mod.Modules
 {
-    public class InjectEverywhereWith<T> : MonoBehaviour where T : Component 
+    public class InjectEverywhereWith<T> : MonoBehaviour where T : MonoBehaviour
     {
-        protected T TargetComponent => GetComponent<T>();
+        protected T TargetComponent;
+        
+        public T GetTargetComponent() => TargetComponent;
+        
+        void Awake()
+        {
+            TargetComponent = GetComponent<T>();
+            IEWInjector.IEWs.Add(this);
+        }
     }
 }

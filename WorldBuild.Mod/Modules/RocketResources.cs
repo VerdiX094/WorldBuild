@@ -27,11 +27,11 @@ namespace WorldBuild.Mod.Modules
         {
             double result = 0;
 
-            double requestedLeft = amount;
+            var requestedLeft = amount;
 
-            foreach (CapsuleResources co in GetComponentsInChildren<CapsuleResources>())
+            foreach (var co in GetComponentsInChildren<CapsuleResources>())
             {
-                double avail = Math.Min(requestedLeft, resourceType == ResourceType.Oxygen ? co.Oxygen : co.EVARes);
+                var avail = Math.Min(requestedLeft, resourceType == ResourceType.Oxygen ? co.Oxygen : co.EVARes);
 
                 requestedLeft -= avail;
 
@@ -85,7 +85,7 @@ namespace WorldBuild.Mod.Modules
         {
             double result = 0;
 
-            foreach (CapsuleResources co in GetComponentsInChildren<CapsuleResources>())
+            foreach (var co in GetComponentsInChildren<CapsuleResources>())
             {
                 result += resourceType == ResourceType.Oxygen ? co.Oxygen : co.EVARes;
             }
@@ -100,12 +100,12 @@ namespace WorldBuild.Mod.Modules
         /// <returns>The amount of oxygen wasted</returns>
         public double ReturnResource(double amount, bool logWaste = true, ResourceType resourceType = ResourceType.Oxygen)
         {
-            double resourceLeft = amount;
+            var resourceLeft = amount;
 
-            foreach (CapsuleResources co in GetComponentsInChildren<CapsuleResources>())
+            foreach (var co in GetComponentsInChildren<CapsuleResources>())
             {
                 if (resourceLeft < 0.001) break;
-                double toReturn = Math.Min(resourceLeft, resourceType == ResourceType.Oxygen ? CapsuleResources.MaxOxygen - co.Oxygen : CapsuleResources.MaxEVARes - co.EVARes);
+                var toReturn = Math.Min(resourceLeft, resourceType == ResourceType.Oxygen ? CapsuleResources.MaxOxygen - co.Oxygen : CapsuleResources.MaxEVARes - co.EVARes);
 
                 switch (resourceType)
                 {

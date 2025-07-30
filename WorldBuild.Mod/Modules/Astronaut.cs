@@ -50,11 +50,11 @@ namespace WorldBuild.Mod.Modules
                 TargetComponent.astronaut.alive = true;
             }
 
-            Location loc = TargetComponent.location.Value;
+            var loc = TargetComponent.location.Value;
 
             var planet = loc.planet;
 
-            double atmoDensity = planet.GetAtmosphericDensity(TargetComponent.location.Value.Height);
+            var atmoDensity = planet.GetAtmosphericDensity(TargetComponent.location.Value.Height);
 
             BreathingAir = true;
 

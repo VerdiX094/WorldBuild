@@ -29,12 +29,12 @@ namespace WorldBuild.Mod.Modules
 
             if (!varMod.boolVariables.GetValue("oxygenInitialized"))
             {
-                Oxygen = BuildManager.PlacedFrames <= 2 ? 0 : MaxOxygen;
+                Oxygen = WorldBuildManager.PlacedFrames <= 2 ? 0 : MaxOxygen;
                 varMod.boolVariables.SetValue("oxygenInitialized", true);
             }
             if (!varMod.boolVariables.GetValue("evaresInitialized"))
             {
-                EVARes = BuildManager.PlacedFrames <= 2 ? 0 : MaxEVARes;
+                EVARes = WorldBuildManager.PlacedFrames <= 2 ? 0 : MaxEVARes;
                 varMod.boolVariables.SetValue("evaresInitialized", true);
             }
         }

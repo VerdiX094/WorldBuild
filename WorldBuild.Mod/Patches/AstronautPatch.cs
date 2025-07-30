@@ -23,19 +23,31 @@ namespace WorldBuild.Mod.Patches
     [HarmonyPatch(typeof(Astronaut_EVA), "OnFixedUpdate")]
     public static class AstronautFixedUpdatePatch
     {
-        public static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
-        {
-            List<CodeInstruction> codes = instructions.ToList();
+        public static Astronaut_EVA instance;
 
-            for (int i = 0; i < codes.Count; i++)
+        [HarmonyPrefix]
+        public static void Prefix(Astronaut_EVA __instance)
+        {
+            instance = __instance;
+        }
+        public static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, ILGenerator il)
+        {
+            var codes = instructions.ToList();
+
+            for (var i = 0; i < codes.Count; i++)
             {
                 if (codes[i].opcode == OpCodes.Ldc_R8 && codes[i].OperandIs(3.5))
                 {
                     codes[i] = new CodeInstruction(OpCodes.Ldc_R8, 8.0);
                 }
             }
-            
-            return codes.AsEnumerable();
+
+            return codes;
+        }
+
+        public static bool ShouldJump()
+        {
+            return !Input.GetKey(KeyCode.LeftControl);
         }
     }
 }

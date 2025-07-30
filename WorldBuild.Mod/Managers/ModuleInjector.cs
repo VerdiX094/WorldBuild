@@ -26,15 +26,15 @@ namespace WorldBuild.Mod.Managers
 
         private void Inject()
         {
-            foreach (Part part in Base.partsLoader.parts.Values)
+            foreach (var part in Base.partsLoader.parts.Values)
             {
-                ExternalModule[] modules = part.GetComponentsInChildren<ExternalModule>();
+                var modules = part.GetComponentsInChildren<ExternalModule>();
                 
-                for (int i = 0; i < modules.Length; i++)
+                for (var i = 0; i < modules.Length; i++)
                 {
                     if (modules[i])
                     {
-                        Module module = modules[i].gameObject.AddComponent(CorrespondingTypes.GetCorrespondingType(modules[i].type)) as Module;
+                        var module = modules[i].gameObject.AddComponent(CorrespondingTypes.GetCorrespondingType(modules[i].type)) as Module;
 
                         module.variables = modules[i].args;
                     }

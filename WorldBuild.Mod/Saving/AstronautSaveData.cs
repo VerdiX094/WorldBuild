@@ -5,7 +5,7 @@ namespace WorldBuild.Mod.Saving
 {
     [Serializable]
     public struct AstronautSaveData
-    { 
+    {
         public bool evaActive;
         [FormerlySerializedAs("inEva")] public bool isCurrentPlayer;
         public Double2 position;

@@ -18,7 +18,7 @@ namespace WorldBuild.Mod.Managers
     {
         private void Start()
         {
-            Screen_Game sg = GameManager.main.world_Input;
+            var sg = GameManager.main.world_Input;
 
             sg.onInputEnd += (OnInputEndData oied) =>
             {
@@ -86,11 +86,11 @@ namespace WorldBuild.Mod.Managers
         {
             if (rocket == null) return new BestCapsuleData();
 
-            BestCapsuleData capsuleData = new BestCapsuleData();
+            var capsuleData = new BestCapsuleData();
 
-            foreach (Part part in rocket.partHolder.parts.Where(part => part.GetComponent<CrewModule>() != null))
+            foreach (var part in rocket.partHolder.parts.Where(part => part.GetComponent<CrewModule>() != null))
             {
-                CrewModule crew = part.GetComponent<CrewModule>();
+                var crew = part.GetComponent<CrewModule>();
 
                 double dist = (position - GetGlobalCapsuleCenter(crew)).magnitude;
 

@@ -36,7 +36,7 @@ namespace WorldBuild.Mod
 
         public static bool CheckSceneLoaded(string name)
         {
-            for (int i = 0; i < SceneManager.sceneCount; i++)
+            for (var i = 0; i < SceneManager.sceneCount; i++)
             {
                 if (SceneManager.GetSceneAt(i).isLoaded)
                 if (SceneManager.GetSceneAt(i).name == name)
@@ -78,13 +78,13 @@ namespace WorldBuild.Mod
 
         public static string StringifyTime(double seconds)
         {
-            int hoursLeft = (int)(seconds / 3600);
-            int minutesLeft = (int)(seconds / 60 - hoursLeft * 60);
-            int secondsLeft = (int)(seconds - minutesLeft * 60 - hoursLeft * 3600);
+            var hoursLeft = (int)(seconds / 3600);
+            var minutesLeft = (int)(seconds / 60 - hoursLeft * 60);
+            var secondsLeft = (int)(seconds - minutesLeft * 60 - hoursLeft * 3600);
 
-            string hoursLeftString = hoursLeft > 0 ? $"{hoursLeft}h " : "";
-            string minutesLeftString = hoursLeft > 0 || minutesLeft > 0 ? $"{minutesLeft}m " : "";
-            string secondsLeftString = $"{secondsLeft}s";
+            var hoursLeftString = hoursLeft > 0 ? $"{hoursLeft}h " : "";
+            var minutesLeftString = hoursLeft > 0 || minutesLeft > 0 ? $"{minutesLeft}m " : "";
+            var secondsLeftString = $"{secondsLeft}s";
 
             return string.Concat(hoursLeftString, minutesLeftString, secondsLeftString);
         }
@@ -97,12 +97,12 @@ namespace WorldBuild.Mod
 
             while (result.Count < source.Count())
             {
-                double bestKey = desc ? double.NegativeInfinity : double.PositiveInfinity;
+                var bestKey = desc ? double.NegativeInfinity : double.PositiveInfinity;
                 T bestValue = default;
 
                 foreach (var item in temp)
                 {
-                    double curKey = key.Invoke(item);
+                    var curKey = key.Invoke(item);
                     if ((desc && curKey >= bestKey) || (!desc && curKey <= bestKey))
                     {
                         bestKey = curKey;
@@ -126,11 +126,11 @@ namespace WorldBuild.Mod
         {
             var result = new StringBuilder();
 
-            foreach (ResourceModule rm in part.GetModules<ResourceModule>())
+            foreach (var rm in part.GetModules<ResourceModule>())
             {
                 result.AppendLine(rm.resourceType.displayName.Field + ": " + rm.ResourceAmount.ToString(2, false) + " / " + rm.TotalResourceCapacity.ToString(2, false) + rm.resourceType.resourceUnit.Field);
             }
-            foreach (EngineModule em in part.GetModules<EngineModule>())
+            foreach (var em in part.GetModules<EngineModule>())
             {
                 result.AppendLine("Thrust: " + em.thrust.Value + "t");
             }

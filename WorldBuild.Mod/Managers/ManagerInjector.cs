@@ -37,10 +37,10 @@ namespace WorldBuild.Mod.Managers
 
         private static void InjectToScene(Scene s)
         {
-            GameObject managersGO = new GameObject($"WorldBuild Managers - {s.name}");
+            var managersGO = new GameObject($"WorldBuild Managers - {s.name}");
             SceneManager.MoveGameObjectToScene(managersGO, s);
 
-            foreach (Type type in ManagerTypes)
+            foreach (var type in ManagerTypes)
             {
                 var scenes = GetScenesToAttach(type);
 

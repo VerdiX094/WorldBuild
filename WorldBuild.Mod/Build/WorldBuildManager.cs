@@ -14,13 +14,16 @@ using static SFS.Builds.BuildGrid;
 using WorldBuild.Mod.Managers;
 using WorldBuild.Mod.UI;
 using System.Collections;
+using System.Globalization;
 using System.Net.Sockets;
 using System.Threading.Tasks;
 using WorldBuild.Mod.Modules;
+using static ConvexPolygon;
+// ReSharper disable All
 
 namespace WorldBuild.Mod.Build
 {
-    public class BuildManager : WorldManager<BuildManager>
+    public class WorldBuildManager : WorldManager<WorldBuildManager>
     {
         public bool worldBuildActive;
         public bool draggingPart;
@@ -70,30 +73,30 @@ namespace WorldBuild.Mod.Build
 
         Rocket GetBestRocket(Rocket[] rockets, float limiter = 6f)
         {
-            float bestDist = limiter;
+            var bestDist = limiter;
             Rocket bestRocket = null;
 
             var partPoints = new HashSet<Vector2>();
 
-            foreach (ConvexPolygon convex in heldPart.GetBuildColliderPolygons().Item1)
+            foreach (var convex in heldPart.GetBuildColliderPolygons().Item1)
             {
                 convex.points.ForEach(p => partPoints.Add(p));
             }
 
-            foreach (Rocket rocket in rockets)
+            foreach (var rocket in rockets)
             {
                 if (!rocket.physics.loader.Loaded) continue;
 
-                foreach (Part rocketPart in rocket.partHolder.partsSet)
+                foreach (var rocketPart in rocket.partHolder.partsSet)
                 {
-                    foreach (ConvexPolygon convex in rocketPart.GetBuildColliderPolygons().Item1)
+                    foreach (var convex in rocketPart.GetBuildColliderPolygons().Item1)
                     {
-                        foreach (Vector2 point in convex.points)
+                        foreach (var point in convex.points)
                         {
                             var tp = point; // seems like i shouldnt use transformpoint here
-                            foreach (Vector2 partPoint in partPoints)
+                            foreach (var partPoint in partPoints)
                             {
-                                float dist = (tp - partPoint).magnitude;
+                                var dist = (tp - partPoint).magnitude;
                                 if (dist <= bestDist)
                                 {
                                     bestDist = dist;
@@ -131,35 +134,36 @@ namespace WorldBuild.Mod.Build
             if (rocketColliders == null)
             {
                 rocketColliders = new Dictionary<Rocket, List<PartCollider>>();
-                foreach (Rocket rkt in GameManager.main.rockets.Where(r => r.physics.loader.Loaded))
+                foreach (var rkt in GameManager.main.rockets.Where(r => r.physics.loader.Loaded))
                 {
                     rocketColliders.Add(rkt, CreateBuildColliders(rkt.partHolder.GetArray()));
                 }
             }
+            
+            MsgDrawer.main.Log(WorldView.ToGlobalPosition(heldPart.transform.TransformPoint(Vector3.zero)).ToString());
+            MsgDrawer.main.Log(WorldView.main.ViewLocation.planet.GetTerrainHeightAtAngle(WorldView.main.ViewLocation.position.AngleRadians).ToString(CultureInfo.InvariantCulture));
 
-            foreach (ConvexPolygon partPoly in heldPartColliders.SelectMany((col) => col.colliders))
+            foreach (var partPoly in heldPartColliders.SelectMany((col) => col.colliders))
             {
-                foreach (KeyValuePair<Rocket, List<PartCollider>> kvp in rocketColliders)
+                foreach (var kvp in rocketColliders)
                 {
-                    foreach (ConvexPolygon rocketPoly in kvp.Value.SelectMany((col) => col.colliders))
+                    foreach (var rocketPoly in kvp.Value.SelectMany((col) => col.colliders))
                     {
-                        if (ConvexPolygon.Intersect(partPoly, rocketPoly, -0.08f))
+                        if (Intersect(partPoly, rocketPoly, -0.08f))
                         {
                             return PartPlacementState.ClippingRocket;
                         }
                     }
                 }
 
-                // ! TODO: Fix part/terrain clipping detection
-                // foreach (Vector2 point in partPoly.points)
-                // {
-                //     Double2 worldPos = WorldView.ToGlobalPosition(heldPart.transform.TransformPoint(point));
-                //     if (WorldView.main.ViewLocation.planet.IsInsideTerrain(worldPos, -15))
-                //     {
-                //         PartPlacementState = PartPlacementState.ClippingTerrain;
-                //         return;
-                //     }
-                // }
+                foreach (var point in partPoly.points)
+                {
+                     var worldPos = WorldView.ToGlobalPosition(heldPart.transform.TransformPoint(point));
+                     if (WorldView.main.ViewLocation.planet.IsInsideTerrain(worldPos, 1f))
+                     {
+                         return PartPlacementState.ClippingTerrain;
+                     }
+                }
             }
             return PartPlacementState.Allowed;
         }
@@ -177,11 +181,11 @@ namespace WorldBuild.Mod.Build
             closestRocket = GetBestRocket(GameManager.main.rockets.ToArray());
 
             // * Update part rotation.
-            float angle = closestRocket?.rb2d.rotation ?? ((float) WorldView.ToGlobalPosition(heldPart.transform.position).AngleDegrees - 90f);
+            var angle = closestRocket?.rb2d.rotation ?? ((float) WorldView.ToGlobalPosition(heldPart.transform.position).AngleDegrees - 90f);
             heldPart.transform.rotation = Quaternion.Euler(0, 0, angle + rotOffset);
 
             // * Update part position.
-            Vector2 pos = partTargetPos;
+            var pos = partTargetPos;
             if (closestRocket != null)
             {
                 Vector2 localPos = closestRocket.partHolder.transform.InverseTransformPoint(pos);
@@ -200,9 +204,9 @@ namespace WorldBuild.Mod.Build
                 PartPlacementState = CalculateCollidersAndGetState();
                 if (AstronautSpawner.main.eva.GetComponent<Astronaut>().materialLeft < PartPriceCalculator.Calculate(heldPart))
                     PartPlacementState = PartPlacementState.TooExpensive;
-                int runEvery = 8; //th frame
+                var runEvery = 8; //th frame
 
-                for (int i = 0; i < runEvery; i++)
+                for (var i = 1; i < runEvery; i++)
                 {
                     yield return null;
                 }
@@ -211,15 +215,15 @@ namespace WorldBuild.Mod.Build
 
         List<PartCollider> CreateBuildColliders(params Part[] parts)
         {
-            List<PartCollider> buildColliders = new List<PartCollider>();
-            for (int i = 0; i < parts.Length; i++)
+            var buildColliders = new List<PartCollider>();
+            for (var i = 0; i < parts.Length; i++)
             {
-                PolygonData[] modules = parts[i].GetModules<PolygonData>();
-                foreach (PolygonData polygonData in modules)
+                var modules = parts[i].GetModules<PolygonData>();
+                foreach (var polygonData in modules)
                 {
                     if (polygonData.BuildCollider /* _IncludeInactive */)
                     {
-                        PartCollider partCollider = new PartCollider
+                        var partCollider = new PartCollider
                         {
                             module = polygonData,
                             colliders = null
@@ -266,7 +270,7 @@ namespace WorldBuild.Mod.Build
             partTargetPos = mousePos;
             draggingPart = true;
 
-            foreach (Collider2D col in heldPart.GetModules<Collider2D>())
+            foreach (var col in heldPart.GetModules<Collider2D>())
             {
                 if (col.isActiveAndEnabled && !col.isTrigger)
                 {
@@ -277,12 +281,12 @@ namespace WorldBuild.Mod.Build
 
             if (heldPart != null)
             {
-                foreach (BaseMesh partMesh in heldPart.GetModules<BaseMesh>())
+                foreach (var partMesh in heldPart.GetModules<BaseMesh>())
                 {
-                    Mesh mesh = AccessTools.FieldRefAccess<BaseMesh, Mesh>("meshReference").Invoke(partMesh);
+                    var mesh = AccessTools.FieldRefAccess<BaseMesh, Mesh>("meshReference").Invoke(partMesh);
                     if (!defaultMeshColors.ContainsKey(mesh))
                     {
-                        List<Color32> colors = new List<Color32>();
+                        var colors = new List<Color32>();
                         mesh.GetColors(colors);
                         defaultMeshColors.Add(mesh, colors);
                     }
@@ -323,7 +327,7 @@ namespace WorldBuild.Mod.Build
                 return;
             }
 
-            int price = PartPriceCalculator.Calculate(heldPart);
+            var price = PartPriceCalculator.Calculate(heldPart);
             var astronaut = AstronautSpawner.main.eva.GetComponent<Astronaut>();
             
             if (astronaut.materialLeft < price)
@@ -334,7 +338,7 @@ namespace WorldBuild.Mod.Build
             
             astronaut.materialLeft -= price;
 
-            foreach (Collider2D col in disabledColliders)
+            foreach (var col in disabledColliders)
             {
                 col.enabled = true;
             }
@@ -342,8 +346,8 @@ namespace WorldBuild.Mod.Build
             if (closestRocket != null)
             {
                 heldPart.transform.parent = closestRocket.partHolder.transform;
-                Part[] parts = closestRocket.partHolder.GetArray().AddItem(heldPart).ToArray();
-                new JointGroup(RocketManager.GenerateJoints(parts), parts.ToList()).RecreateGroups(out List<JointGroup> jointGroups);
+                var parts = closestRocket.partHolder.GetArray().AddItem(heldPart).ToArray();
+                new JointGroup(RocketManager.GenerateJoints(parts), parts.ToList()).RecreateGroups(out var jointGroups);
                 if (jointGroups.Count == 1)
                 {
                     // * Part was attached to rocket.
@@ -352,8 +356,8 @@ namespace WorldBuild.Mod.Build
                 }
             }
             // * Part was NOT attached to rocket.
-            JointGroup group = new JointGroup(new List<PartJoint>(), new List<Part>() { heldPart });
-            Rocket rocket = Instantiate(AccessTools.StaticFieldRefAccess<RocketManager, Rocket>("prefab"));
+            var group = new JointGroup(new List<PartJoint>(), new List<Part>() { heldPart });
+            var rocket = Instantiate(AccessTools.StaticFieldRefAccess<RocketManager, Rocket>("prefab"));
             
             rocket.physics.SetLocationAndState
             (
@@ -361,7 +365,7 @@ namespace WorldBuild.Mod.Build
                 (
                     WorldTime.main.worldTime,
                     WorldView.main.ViewLocation.planet,
-                    WorldView.ToGlobalPosition((Vector2)heldPart.transform.TransformPoint(heldPart.centerOfMass.Value)),
+                    WorldView.ToGlobalPosition(heldPart.transform.TransformPoint(heldPart.centerOfMass.Value)),
                     PlayerController.main.player.Value.location.velocity
                 ),
                 false
@@ -401,17 +405,17 @@ namespace WorldBuild.Mod.Build
         {
             if (heldPart != null)
             {
-                foreach (BaseMesh partMesh in heldPart.GetModules<BaseMesh>())
+                foreach (var partMesh in heldPart.GetModules<BaseMesh>())
                 {
-                    Mesh mesh = AccessTools.FieldRefAccess<BaseMesh, Mesh>("meshReference").Invoke(partMesh);
-                    mesh.SetColors(defaultMeshColors.Where(m => m.Key == mesh).FirstOrDefault().Value);
+                    var mesh = AccessTools.FieldRefAccess<BaseMesh, Mesh>("meshReference").Invoke(partMesh);
+                    mesh.SetColors(defaultMeshColors.FirstOrDefault(m => m.Key == mesh).Value);
                 }
             }
         }
 
         public void AddInputs()
         {
-            Screen_Game input = GameManager.main.world_Input;
+            var input = GameManager.main.world_Input;
             input.onInputStart += OnInputStart;
             input.onInputEnd += OnInputEnd;
             input.onDrag += OnDrag;
@@ -421,8 +425,8 @@ namespace WorldBuild.Mod.Build
             {
                 if (data.inputType == InputType.MouseLeft && heldPart != null)
                 {
-                    Vector2 pos = data.position.World(0f);
-                    draggingPart = Part_Utility.RaycastParts(new [] { heldPart }, pos, 0.3f, out PartHit _);
+                    var pos = data.position.World(0f);
+                    draggingPart = Part_Utility.RaycastParts(new [] { heldPart }, pos, 0.3f, out var _);
                 }
             }
 

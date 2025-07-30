@@ -1,27 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Cysharp.Threading.Tasks;
+﻿using System.Linq;
 using SFS;
 using SFS.Parts;
 using SFS.Variables;
 using SFS.World;
-using UnityEngine;
-using UnityEngine.SceneManagement;
 using WorldBuild.Mod.Modules;
 
 namespace WorldBuild.Mod.Managers
 {
-    public class CapsuleOxygenVariableInjector : BaseManager<CapsuleOxygenVariableInjector>
+    public class CapsuleVariables : BaseManager<CapsuleVariables>
     {
         private void Start()
         {
             var capsules = Base.partsLoader.parts.Values
                 .Where(part => part.GetComponent<CrewModule>() != null);
 
-            foreach (Part capsule in capsules)
+            foreach (var capsule in capsules)
             {
                 Debugger.Log("chuj kurwa");
                 var varMod = capsule.GetComponent<VariablesModule>();

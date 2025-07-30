@@ -42,7 +42,7 @@ namespace WorldBuild.Mod.UI
                 windowState = window.As<ClosableWindow>().Minimized;
             }
 
-            double timeLeft = rox.CalculateResourceAvailable();
+            var timeLeft = rox.CalculateResourceAvailable();
 
             if (!(elements["oxygenAvail"] is Label label))
             {
@@ -62,8 +62,8 @@ namespace WorldBuild.Mod.UI
 
         public override void GenerateGUI()
         {
-            int width = 384;
-            int height = 200;
+            var width = 384;
+            var height = 200;
             var coords = WindowPositionHelper.GenerateWindowCoords(0, -80, width, height, Anchor.TopCenter, Origin.TopCenter);
             window = UIToolsBuilder.CreateClosableWindow(holder.transform, WindowID, width, height, coords.x, coords.y, false, false, 0.95f, "Astronaut Manager");
             window.As<ClosableWindow>().Minimized = windowState;
