@@ -78,15 +78,21 @@ namespace WorldBuild.Mod
 
         public static string StringifyTime(double seconds)
         {
-            var hoursLeft = (int)(seconds / 3600);
-            var minutesLeft = (int)(seconds / 60 - hoursLeft * 60);
-            var secondsLeft = (int)(seconds - minutesLeft * 60 - hoursLeft * 3600);
+            // Format oxygen time as minutes/seconds only.
+            // Example outputs: "50s", "1m2s", "3m".
+            if (seconds < 60)
+            {
+                int secs = Math.Max(0, (int)seconds);
+                return $"{secs}s";
+            }
 
-            var hoursLeftString = hoursLeft > 0 ? $"{hoursLeft}h " : "";
-            var minutesLeftString = hoursLeft > 0 || minutesLeft > 0 ? $"{minutesLeft}m " : "";
-            var secondsLeftString = $"{secondsLeft}s";
+            int minutesLeft = (int)(seconds / 60);
+            int secondsLeft = (int)(seconds - minutesLeft * 60);
 
-            return string.Concat(hoursLeftString, minutesLeftString, secondsLeftString);
+            if (secondsLeft > 0)
+                return $"{minutesLeft}m{secondsLeft}s";
+
+            return $"{minutesLeft}m";
         }
 
         public static List<T> KeySort<T>(this List<T> source, Func<T, double> key, bool desc = false)
