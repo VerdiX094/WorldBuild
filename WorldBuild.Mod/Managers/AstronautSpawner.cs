@@ -48,8 +48,8 @@ namespace WorldBuild.Mod.Managers
         {
             if (!(PlayerController.main.player.Value is Astronaut_EVA curEva)) return;
 
-            rocket.GetComponent<RocketResources>().ReturnResource(eva.GetComponent<Astronaut>().GetOxygenSecondsLeft());
-            rocket.GetComponent<RocketResources>().ReturnResource(eva.GetComponent<Astronaut>().materialLeft, true, RocketResources.ResourceType.BuildResource);
+            rocket.GetComponent<RocketResources>().ReturnEVASeconds(eva.GetComponent<Astronaut>().GetOxygenSecondsLeft());
+            rocket.GetComponent<RocketResources>().ReturnEVASeconds(eva.GetComponent<Astronaut>().materialLeft, true, RocketResources.ResourceType.BuildResource);
 
             AstronautManager.DestroyEVA(curEva, false);
 
@@ -86,7 +86,7 @@ namespace WorldBuild.Mod.Managers
 
             if (!ox) return;
 
-            if (ox.CalculateResourceAvailable() < 30)
+            if (ox.CalculateEVASecondsAvailable() < 30)
             {
                 MsgDrawer.main.Log("Not enough oxygen for at least 30 seconds of EVA");
                 return;
@@ -101,9 +101,14 @@ namespace WorldBuild.Mod.Managers
             
             var astronaut = eva.GetComponent<Astronaut>();
             AstronautManagementGUI.main.OnFrame(); // refresh gui so the elements can be added to dict
+
+            if (ox.CalculateEVASecondsAvailable() < astronaut.maxOxygen - 0.01)
+            {
+                MsgDrawer.main.Log($"Not enough oxygen for full {astronaut.maxOxygen} seconds of EVA, starting with {ox.CalculateEVASecondsAvailable().Round(0)}s instead");
+            }
             
-            astronaut.maxOxygen = rocket.GetComponent<RocketResources>().RequestResource(astronaut.maxOxygen);
-            astronaut.materialLeft = rocket.GetComponent<RocketResources>().RequestResource(Astronaut.maxMaterial, RocketResources.ResourceType.BuildResource);
+            astronaut.maxOxygen = rocket.GetComponent<RocketResources>().RequestEVASeconds(astronaut.maxOxygen);
+            astronaut.materialLeft = rocket.GetComponent<RocketResources>().RequestEVASeconds(Astronaut.maxMaterial, RocketResources.ResourceType.BuildResource);
 
             if (astronaut.maxOxygen.AboutEqual(-1))
             {

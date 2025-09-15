@@ -27,7 +27,7 @@ namespace WorldBuild.Mod.Modules
 
         public double GetOxygenSecondsLeft()
         {
-            if (oxygenSeconds == double.NegativeInfinity) oxygenSeconds = maxOxygen;
+            if (double.IsNegativeInfinity(oxygenSeconds)) oxygenSeconds = maxOxygen;
             return oxygenSeconds;
         }
 

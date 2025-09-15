@@ -14,7 +14,6 @@ namespace WorldBuild.Mod.UI
 
         void Start()
         {
-            Debugger.Log("WorldBuild.Mod.UI.GUIManager init");
 
             foreach (var type in Assembly.GetExecutingAssembly().GetTypes())
             {
@@ -25,19 +24,9 @@ namespace WorldBuild.Mod.UI
                     bases.Add(Activator.CreateInstance(type) as GUIBase);
                 } catch
                 {
-                    Debugger.Log("Failed to initialize a UI!", true);
+                    Debugger.Error("Failed to initialize an UI!", true);
                 }
             }
-
-            SceneManager.sceneLoaded += (Scene scene, LoadSceneMode mode) =>
-            {
-                bases.ForEach(Base =>
-                {
-                    Base.SceneReqMet = Utility.CheckSceneLoaded(scene.name);
-
-                    if (Base.SceneReqMet) Debugger.Log("Scene req met");
-                });
-            };
         }
 
         void Update()
@@ -49,9 +38,9 @@ namespace WorldBuild.Mod.UI
                         Base.OnFrame();
                     } catch (Exception e)
                     {
-                        Debugger.Log($"UI {Base.GetType().Name} errored! Error: " + e, true);
+                        Debugger.Error($"UI {Base.GetType().Name} errored! Error: " + e, true);
                     }
-                });
+            });
         }
 
         void LateUpdate()
@@ -64,7 +53,7 @@ namespace WorldBuild.Mod.UI
                     }
                     catch (Exception e)
                     {
-                        Debugger.Log($"UI {Base.GetType().Name} errored! Error: " + e, true);
+                        Debugger.Error($"UI {Base.GetType().Name} errored! Error: " + e, true);
                     }
             });
         }

@@ -36,7 +36,7 @@ namespace WorldBuild.Mod.Patches
 
             for (var i = 0; i < codes.Count; i++)
             {
-                if (codes[i].opcode == OpCodes.Ldc_R8 && codes[i].OperandIs(3.5))
+                if (codes[i].opcode == OpCodes.Ldc_R8 && codes[i].OperandIs(3.5)) // tip-over speed
                 {
                     codes[i] = new CodeInstruction(OpCodes.Ldc_R8, 8.0);
                 }

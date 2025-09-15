@@ -28,7 +28,7 @@ namespace WorldBuild.Mod.Managers
             };
         }
 
-        public Observable<BestCapsuleData> selectedCapsule = new Observable<BestCapsuleData>();
+        public Observable<BestCapsuleData> selectedCapsule;
 
         private void OnRightClick(Vector2 mouseWorldPosition)
         {
@@ -121,10 +121,6 @@ namespace WorldBuild.Mod.Managers
 
                 return GetGlobalCapsuleCenter(cm);
             }
-        }
-
-        private void Update()
-        {
         }
     }
 

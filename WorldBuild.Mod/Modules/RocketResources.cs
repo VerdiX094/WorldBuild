@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using SFS.Parts.Modules;
 using UnityEngine;
 
 namespace WorldBuild.Mod.Modules
@@ -14,83 +15,110 @@ namespace WorldBuild.Mod.Modules
         public enum ResourceType
         {
             Oxygen,
-            BuildResource
+            BuildResource,
+            Oil
         }
-        // this may bug out when docking new capsules, idk
+
+        public const double OXYGEN_TONS_TO_EVA_SECONDS = 300.0;
+
+        public static string ResourceTypeToString(ResourceType resourceType)
+        {
+            switch (resourceType)
+            {
+                case ResourceType.Oxygen:
+                    return "Oxygen";
+                case ResourceType.BuildResource:
+                    return "Steel";
+                case ResourceType.Oil:
+                    return "Oil";
+            }
+
+            return "???";
+        }
+        
+        // this may bug out when docking new capsules, idk, i don't give a fuck anymore
+
+        private List<ResourceModule> GetAllResourceModules(ResourceType type)
+        {
+            var resourceType = SFSResources.GetByName(ResourceTypeToString(type));
+            
+            var result = new List<ResourceModule>();
+            
+            foreach (var rm in TargetComponent.resources.globalGroups)
+            {
+                if (rm == null) continue;
+                if (rm.resourceType == null) continue;
+                if (rm.resourceType == resourceType) 
+                    result.Add(rm);
+            }
+
+            return result;
+            
+            return TargetComponent.resources.globalGroups.Where((resourceModule) => resourceModule != null && resourceModule.resourceType != null && resourceModule.resourceType.displayName == resourceType.displayName).ToList();
+        }
+        
+        private double GetResourceAmountLeft(ResourceType type)
+        {
+            double amount = 0;
+            
+            foreach (var resourceModule in GetAllResourceModules(type))
+            {
+                amount += resourceModule.ResourceAmount;
+            }
+
+            return amount;
+        }
+
+        private void TakeResource(double amount, ResourceType type, out bool success)
+        {
+            var resourceAmount = GetResourceAmountLeft(type);
+            if (resourceAmount < amount) success = false;
+
+            double left = amount;
+            
+            foreach (ResourceModule rm in GetAllResourceModules(type))
+            {
+                double toTake = Math.Min(rm.ResourceAmount, left);
+                rm.TakeResource(toTake);
+                left -= toTake;
+            }
+            
+            success = true;
+        }
+
+        private void ReturnResource(double amount, ResourceType type, out double wastedAmount)
+        {
+            wastedAmount = amount;
+
+            foreach (var resourceModule in GetAllResourceModules(type))
+            {
+                double toReturn = Math.Min(resourceModule.ResourceSpace, amount);
+                resourceModule.AddResource(toReturn);
+                wastedAmount -= toReturn;
+            }
+        }
 
         /// <summary>
         /// Looks around the capsules and tries to match the requested amount.
         /// </summary>
         /// <param name="amount">The amount of requested oxygen</param>
         /// <returns>The actual amount of oxygen granted</returns>
-        public double RequestResource(double amount, ResourceType resourceType = ResourceType.Oxygen)
+        public double RequestEVASeconds(double amount, ResourceType resourceType = ResourceType.Oxygen)
         {
-            double result = 0;
-
-            var requestedLeft = amount;
-
-            foreach (var co in GetComponentsInChildren<CapsuleResources>())
+            if (CalculateEVASecondsAvailable() < 30)
             {
-                var avail = Math.Min(requestedLeft, resourceType == ResourceType.Oxygen ? co.Oxygen : co.EVARes);
-
-                requestedLeft -= avail;
-
-                result += avail;
+                return -1;
             }
-
-            if (resourceType == ResourceType.Oxygen)
-            {
-                if (result < 30)
-                {
-                    return -1;
-                }
+            double result = Math.Min(amount, GetResourceAmountLeft(resourceType));
             
-                if (result < amount - 0.001)
-                {
-                    MsgDrawer.main.Log($"Not enough oxygen for full {(int)amount.Round(0)} seconds of EVA,\nstarting with {(int)result.Round(0)}s instead");
-                }
-                else
-                {
-                    MsgDrawer.main.Log($"The rocket has {(int)(CalculateResourceAvailable() - result).Round(0)} seconds of oxygen time left.");
-                }
-            }
-
-            // run this again, if the check succeeded
-            requestedLeft = amount;
-
-            foreach (var co in GetComponentsInChildren<CapsuleResources>())
-            {
-                var avail = Math.Min(requestedLeft, resourceType == ResourceType.Oxygen ? co.Oxygen : co.EVARes);
-
-                requestedLeft -= avail;
-
-                switch (resourceType)
-                {
-                    case ResourceType.Oxygen:
-                        co.Oxygen -= avail;
-                        break;
-                    case ResourceType.BuildResource:
-                        co.EVARes -= avail;
-                        break;
-                    default:
-                        Debugger.Log("Ty idioto, jak robisz nowy resourcetype to dodaj go do requestresource()");
-                        break;
-                }
-            }
-
+            TakeResource(result, resourceType, out _);
+            
             return result.Round(3);
         }
 
-        public double CalculateResourceAvailable(ResourceType resourceType = ResourceType.Oxygen)
+        public double CalculateEVASecondsAvailable(ResourceType resourceType = ResourceType.Oxygen)
         {
-            double result = 0;
-
-            foreach (var co in GetComponentsInChildren<CapsuleResources>())
-            {
-                result += resourceType == ResourceType.Oxygen ? co.Oxygen : co.EVARes;
-            }
-
-            return result;
+            return GetResourceAmountLeft(resourceType) * OXYGEN_TONS_TO_EVA_SECONDS;
         }
 
         /// <summary>
@@ -98,29 +126,9 @@ namespace WorldBuild.Mod.Modules
         /// </summary>
         /// <param name="amount">The amount of oxygen to return</param>
         /// <returns>The amount of oxygen wasted</returns>
-        public double ReturnResource(double amount, bool logWaste = true, ResourceType resourceType = ResourceType.Oxygen)
+        public double ReturnEVASeconds(double amount, bool logWaste = true, ResourceType resourceType = ResourceType.Oxygen)
         {
-            var resourceLeft = amount;
-
-            foreach (var co in GetComponentsInChildren<CapsuleResources>())
-            {
-                if (resourceLeft < 0.001) break;
-                var toReturn = Math.Min(resourceLeft, resourceType == ResourceType.Oxygen ? CapsuleResources.MaxOxygen - co.Oxygen : CapsuleResources.MaxEVARes - co.EVARes);
-
-                switch (resourceType)
-                {
-                    case ResourceType.Oxygen:
-                        co.Oxygen += toReturn;
-                        break;
-                    case ResourceType.BuildResource:
-                        co.EVARes += toReturn;
-                        break;
-                    default:
-                        Debugger.Log("Ty idioto, jak robisz nowy resourcetype to dodaj go do returnresource()");
-                        break;
-                }
-                resourceLeft -= toReturn;
-            }
+            ReturnResource(amount, resourceType, out double resourceLeft);
 
             if (logWaste && resourceLeft > 1)
                 MsgDrawer.main.Log($"The rocket's {(resourceType == ResourceType.Oxygen ? "oxygen" : "resource")} tanks are full, {resourceLeft.Round(1)}{(resourceType == ResourceType.Oxygen ? "s of oxygen" : " of resources")} was wasted.");

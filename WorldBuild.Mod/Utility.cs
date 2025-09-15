@@ -95,7 +95,7 @@ namespace WorldBuild.Mod
 
             var temp = new List<T>(source);
 
-            while (result.Count < source.Count())
+            while (result.Count < source.Count)
             {
                 var bestKey = desc ? double.NegativeInfinity : double.PositiveInfinity;
                 T bestValue = default;
@@ -145,12 +145,12 @@ namespace WorldBuild.Mod
 
         public static bool AboutEqual(this float a, float b, float tolerance = 0.0001f)
         {
-            return a - b < tolerance;
+            return Mathf.Abs(a - b) < tolerance;
         }
         
         public static bool AboutEqual(this double a, double b, double tolerance = 0.0000001)
         {
-            return a - b < tolerance;
+            return Math.Abs(a - b) < tolerance;
         }
     }
 }

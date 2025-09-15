@@ -42,16 +42,16 @@ namespace WorldBuild.Mod.UI
                 windowState = window.As<ClosableWindow>().Minimized;
             }
 
-            var timeLeft = rox.CalculateResourceAvailable();
+            var timeLeft = rox.CalculateEVASecondsAvailable();
 
             if (!(elements["oxygenAvail"] is Label label))
             {
-                Debugger.LogError("oxygenAvail was not of the correct type");
+                Debugger.Error("oxygenAvail was not of the correct type");
                 return;
             }
             
             label.Text = $"Available oxygen: {Utility.StringifyTime(timeLeft)}";
-            Elements["resAvail"].As<Label>().Text = $"Available resources: {rox.CalculateResourceAvailable(RocketResources.ResourceType.BuildResource)}";
+            Elements["resAvail"].As<Label>().Text = $"Available resources: {rox.CalculateEVASecondsAvailable(RocketResources.ResourceType.BuildResource)}";
         }
 
         private void OnPlayerChange(Player oldP, Player newP)

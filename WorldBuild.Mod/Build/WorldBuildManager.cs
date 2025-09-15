@@ -3,7 +3,6 @@ using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
 using HarmonyLib;
-using SFS;
 using SFS.UI;
 using SFS.Input;
 using SFS.World;
@@ -15,8 +14,6 @@ using WorldBuild.Mod.Managers;
 using WorldBuild.Mod.UI;
 using System.Collections;
 using System.Globalization;
-using System.Net.Sockets;
-using System.Threading.Tasks;
 using WorldBuild.Mod.Modules;
 using static ConvexPolygon;
 // ReSharper disable All
@@ -38,8 +35,6 @@ namespace WorldBuild.Mod.Build
         Dictionary<Mesh, List<Color32>> defaultMeshColors = new Dictionary<Mesh, List<Color32>>();
 
         float rotOffset = 0;
-
-        Color originalPartColor;
 
         PartPlacementState _partState;
 
@@ -131,40 +126,52 @@ namespace WorldBuild.Mod.Build
 
         PartPlacementState CalculateCollidersAndGetState(Dictionary<Rocket, List<PartCollider>> rocketColliders = null)
         {
-            if (rocketColliders == null)
+            try
             {
-                rocketColliders = new Dictionary<Rocket, List<PartCollider>>();
-                foreach (var rkt in GameManager.main.rockets.Where(r => r.physics.loader.Loaded))
+                if (rocketColliders == null)
                 {
-                    rocketColliders.Add(rkt, CreateBuildColliders(rkt.partHolder.GetArray()));
-                }
-            }
-            
-            MsgDrawer.main.Log(WorldView.ToGlobalPosition(heldPart.transform.TransformPoint(Vector3.zero)).ToString());
-            MsgDrawer.main.Log(WorldView.main.ViewLocation.planet.GetTerrainHeightAtAngle(WorldView.main.ViewLocation.position.AngleRadians).ToString(CultureInfo.InvariantCulture));
-
-            foreach (var partPoly in heldPartColliders.SelectMany((col) => col.colliders))
-            {
-                foreach (var kvp in rocketColliders)
-                {
-                    foreach (var rocketPoly in kvp.Value.SelectMany((col) => col.colliders))
+                    rocketColliders = new Dictionary<Rocket, List<PartCollider>>();
+                    foreach (var rkt in GameManager.main.rockets.Where(r => r.physics.loader.Loaded))
                     {
-                        if (Intersect(partPoly, rocketPoly, -0.08f))
-                        {
-                            return PartPlacementState.ClippingRocket;
-                        }
+                        rocketColliders.Add(rkt, CreateBuildColliders(rkt.partHolder.GetArray()));
                     }
                 }
 
-                foreach (var point in partPoly.points)
+                MsgDrawer.main.Log(WorldView.ToGlobalPosition(heldPart.transform.TransformPoint(Vector3.zero))
+                    .ToString());
+                MsgDrawer.main.Log(WorldView.main.ViewLocation.planet
+                    .GetTerrainHeightAtAngle(WorldView.main.ViewLocation.position.AngleRadians)
+                    .ToString(CultureInfo.InvariantCulture));
+
+                foreach (var partPoly in heldPartColliders.SelectMany((col) => col.colliders))
                 {
-                     var worldPos = WorldView.ToGlobalPosition(heldPart.transform.TransformPoint(point));
-                     if (WorldView.main.ViewLocation.planet.IsInsideTerrain(worldPos, 1f))
-                     {
-                         return PartPlacementState.ClippingTerrain;
-                     }
+                    foreach (var kvp in rocketColliders)
+                    {
+                        foreach (var rocketPoly in kvp.Value.SelectMany((col) => col.colliders))
+                        {
+                            if (Intersect(partPoly, rocketPoly, -0.08f))
+                            {
+                                return PartPlacementState.ClippingRocket;
+                            }
+                        }
+                    }
+
+                    foreach (var point in partPoly.points)
+                    {
+                        var worldPos = WorldView.ToGlobalPosition(heldPart.transform.TransformPoint(point));
+                        if (WorldView.main.ViewLocation.planet.IsInsideTerrain(worldPos, 1f))
+                        {
+                            return PartPlacementState.ClippingTerrain;
+                        }
+                    }
                 }
             }
+            catch (Exception e) // WHY THE FUCK IS THIS SHIT THROWING NULLREF
+            {
+                Debug.Log("Tępy chuju, znowu zjebałeś:"); // You fucked it up again, you blunt dick
+                Debug.Log(e);
+            }
+
             return PartPlacementState.Allowed;
         }
         

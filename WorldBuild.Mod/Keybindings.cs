@@ -94,5 +94,6 @@ namespace WorldBuild.Mod
         public KeybindingsPC.Key FlipVertically = KeyCode.B;
         public KeybindingsPC.Key FlipVertically2 = KeyCode.G;
         public KeybindingsPC.Key Run = KeyCode.LeftShift;
+        public KeybindingsPC.Key StartEVA = KeyCode.T;
     }
 }
