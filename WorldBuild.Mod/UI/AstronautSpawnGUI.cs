@@ -50,8 +50,8 @@ namespace WorldBuild.Mod.UI
                 return;
             }
             
-            label.Text = $"Available oxygen: {Utility.StringifyTime(timeLeft)}";
-            Elements["resAvail"].As<Label>().Text = $"Available resources: {rox.CalculateEVASecondsAvailable(RocketResources.ResourceType.BuildResource)}";
+            label.Text = $"Available oxygen: {Utility.StringifyTime(timeLeft)}"; // min/s only
+            Elements["resAvail"].As<Label>().Text = $"Available resources: {rox.CalculateResourceAvailable(RocketResources.ResourceType.BuildResource)}t"; // display in tons
         }
 
         private void OnPlayerChange(Player oldP, Player newP)
