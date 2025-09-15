@@ -11,33 +11,28 @@ namespace WorldBuild.Mod
         private static object FormatMessage(object msg)
         {
             var frame = new StackTrace().GetFrame(2);
-            return msg + "\n Calling Method: " + frame.GetMethod().ReflectedType?.FullName + ":" + frame.GetMethod().Name;
+            return msg + "\n                     Calling Method: " + frame.GetMethod().ReflectedType?.FullName + ":" + frame.GetMethod().Name;
         }
         
-        public static void Log(object message, bool overrideDE = false)
+        public static void Log(object message)
         {
-            if (!IsDebugEnabled && !overrideDE) return;
+            if (!IsDebugEnabled) return;
 
             Debug.Log(FormatMessage(message));
         }
 
-        public static void LogException(Exception ex, bool overrideDE = false)
+        public static void Exception(Exception ex, bool overrideDE = false)
         {
-            if (!IsDebugEnabled && !overrideDE) return;
-
             Debug.LogException(ex);
         }
 
-        public static void LogError(object message, bool overrideDE = false)
+        public static void Error(object message, bool overrideDE = false)
         {
-            if (!IsDebugEnabled && !overrideDE) return;
-
-            Debug.LogError(FormatMessage(message));
+            Debug.LogError(message + "\n" + new StackTrace());
         }
 
-        public static void LogWarning(object message, bool overrideDE = false)
+        public static void Warning(object message, bool overrideDE = false)
         {
-            if(!IsDebugEnabled && !overrideDE) return;
 
             Debug.LogWarning(FormatMessage(message));
         }

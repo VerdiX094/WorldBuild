@@ -63,7 +63,7 @@ namespace WorldBuild.Mod.UI
         {
             if (holder == null)
             {
-                Debugger.Log("Holder was null!");
+                Debugger.Warning("Holder was null!");
                 return;
             }
 
@@ -96,8 +96,6 @@ namespace WorldBuild.Mod.UI
                 NewGUI();
 
                 d++;
-
-                Debugger.Log($"Generated the UI for the {d}th time");
             }
 
             holder.SetActive(newActive);

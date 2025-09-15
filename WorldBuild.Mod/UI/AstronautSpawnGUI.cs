@@ -42,11 +42,11 @@ namespace WorldBuild.Mod.UI
                 windowState = window.As<ClosableWindow>().Minimized;
             }
 
-            var timeLeft = rox.CalculateResourceAvailable();
+            var timeLeft = rox.CalculateEVASecondsAvailable();
 
             if (!(elements["oxygenAvail"] is Label label))
             {
-                Debugger.LogError("oxygenAvail was not of the correct type");
+                Debugger.Error("oxygenAvail was not of the correct type");
                 return;
             }
             

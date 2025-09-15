@@ -308,18 +308,15 @@
     <Compile Include="Build\WorldBuildManager.cs" />
     <Compile Include="Keybindings.cs" />
     <Compile Include="Managers\AstronautSpawner.cs" />
-    <Compile Include="Managers\BegForMoney.cs" />
     <Compile Include="Managers\BuildManager.cs" />
     <Compile Include="Managers\VABSurvivalManager.cs" />
     <Compile Include="Managers\WorldManager.cs" />
-    <Compile Include="Managers\CapsuleVariables.cs" />
     <Compile Include="CorrespondingTypes.cs" />
     <Compile Include="Managers\CustomCredits.cs" />
     <Compile Include="Entrypoint.cs" />
     <Compile Include="Managers\BaseManager.cs" />
     <Compile Include="Managers\Manager.cs" />
     <Compile Include="Managers\ManagerInjector.cs" />
-    <Compile Include="Modules\CapsuleResources.cs" />
     <Compile Include="Modules\InjectEverywhereWith.cs" />
     <Compile Include="Module.cs" />
     <Compile Include="Managers\ModuleInjector.cs" />
@@ -328,7 +325,9 @@
     <Compile Include="Modules\IEWInjector.cs" />
     <Compile Include="Modules\RocketResources.cs" />
     <Compile Include="Build\Patches.cs" />
+    <Compile Include="Modules\SFSResources.cs" />
     <Compile Include="PartPriceCalculator.cs" />
+    <Compile Include="Patches\AssetPackLoadPatch.cs" />
     <Compile Include="Patches\AstronautPatch.cs" />
     <Compile Include="Patches\DevSettingsPatch.cs" />
     <Compile Include="Patches\ModsListPatch.cs" />
@@ -348,6 +347,7 @@
     <Compile Include="UI\AstronautManagementGUI.cs" />
     <Compile Include="UI\AstronautSpawnGUI.cs" />
     <Compile Include="Managers\CapsuleScanner.cs" />
+    <Compile Include="UI\CapsuleTooltip.cs" />
     <Compile Include="UI\CreateWorldUI.cs" />
     <Compile Include="UI\VanillaAstronautGUI.cs" />
     <Compile Include="UI\GUIBase.cs" />
@@ -356,7 +356,6 @@
     <Compile Include="UI\VariableEditorGUI.cs" />
     <Compile Include="UI\WindowPositionHelper.cs" />
     <Compile Include="Utility.cs" />
-    <Compile Include="Variables\Bindable.cs" />
     <Compile Include="Variables\Observable.cs" />
   </ItemGroup>
   <ItemGroup>

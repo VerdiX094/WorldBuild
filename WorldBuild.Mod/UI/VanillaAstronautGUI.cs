@@ -54,7 +54,7 @@ namespace WorldBuild.Mod.UI
             topBar = GameObject.Find("Top Center Stats");
 
             //originalRecover = GameObject.Find("Recover Button");
-            astronautRecover = Instantiate(originalRecover);
+            //astronautRecover = Instantiate(originalRecover);
         }
         
         private void Update()

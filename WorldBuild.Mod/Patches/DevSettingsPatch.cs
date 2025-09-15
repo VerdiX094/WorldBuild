@@ -15,7 +15,7 @@ namespace WorldBuild.Mod.Patches
         [HarmonyPostfix] 
         public static void Postfix(ref bool __result) 
         {
-            __result = false;
+            __result = true;
         }
     }
 }
